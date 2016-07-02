@@ -61,17 +61,17 @@ var insightModule1 = (function () {
 			var key = customerInfo.gdun + '.' + reqType.suffixCode;
 			console.log('key being used to retrieve insight: ' + '"' + key + '"');
 			
-			getDataFromMunger.getData(key, function (result) {
-				console.log('result body = ' + result );
-				var parsedResult = JSON.parse(result);
-				var answer = parsedResult.answer;
-				console.log('answer = ' + answer );	
+			getDataFromMunger.getData(key, function (result) {	
 				
 				if (!result) {
 
-					var speechOutput = 'I had trouble pulling that information. What would you like to do?';
+					var speechOutput = 'That information doesn\'t seem to be available right now. Can I help with something else?';
 					
 				} else { // successfully pulled JSON inventory info
+					console.log('result body = ' + result );
+					var parsedResult = JSON.parse(result);
+					var answer = parsedResult.answer;
+					console.log('answer = ' + answer );				
 					
 					var addedS = "'s";
 				
@@ -80,7 +80,7 @@ var insightModule1 = (function () {
 					}
 					
 					if (reqType.ItemName == 'SYMMETRIX') {
-						reqType.ItemName = 'Sim';
+						reqType.ItemName = 'Symm';
 					}
 
 					if (reqType.ItemName == 'CONNECTRIX' || reqType.ItemName == 'POWERPATH') {

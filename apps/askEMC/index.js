@@ -24,7 +24,7 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 	app = new alexa.app( 'askEMC' ), // name of this app
 	speechOutput, // what to say back to the user
 	repromptOutput, // what to say if the user doesn't answer
-	paginationSize = 3, // specifies the number of customer names to say at one time
+	paginationSize = 5, // specifies the number of customer names to say at one time
 	listOfQuestions = '', // a description for the user of all the questions they can ask 
 	dataTypes = [], // an array that gets populated with the different kind of things a user can ask about for a given customer
 					// examples: VNX, RecoverPoint, Avamar, Symmetrix (see insightModule1.addThisDataType )
@@ -244,10 +244,11 @@ function handleOneshotDataRequest(request, response) {
 	
     if (customerInfo.error) {
         // invalid customer. Move to the dialog by prompting to fire DialogGetDataIntent
-        repromptOutput = "Currently, I have information about " + CUSTOMERS.length + " customers, but not that one."
-            + "Please try again, which customer would you like information for?";
         // if we received a value for an unknown customer, repeat it to the user, otherwise we received an empty slot
-        speechOutput = customerInfo.customerName ? "I'm sorry, I don't have any data for " + customerInfo.customerName + ". " + repromptOutput :repromptOutput;
+        speechOutput = customerInfo.customerName ? "I thought I heard you ask about a customer, but I'm sorry, I don't have any data for " 
+						+ customerInfo.customerName + ". Currently, I have information about " + CUSTOMERS.length + " customers, but not that one."
+						+ "What else can I help you with?";
+        repromptOutput = "What else can I help you with?";						
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
 		response.send();
