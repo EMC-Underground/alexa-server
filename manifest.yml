@@ -1,0 +1,8 @@
+---
+applications:
+- name: alexaserver
+  memory: 512M
+  instances: 1
+  host: alexaserverhost
+  command: node server.js
+

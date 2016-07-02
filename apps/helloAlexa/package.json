@@ -1,0 +1,12 @@
+{
+  "name": "helloalexa",
+  "version": "1.0.0",
+  "description": "\"# helloAlexa\"",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "alexa-app": "^2.3.3"
+  },
+  "devDependencies": {}
+}

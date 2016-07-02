@@ -1,0 +1,11 @@
+{
+  "name": "askEMC",
+  "version": "1.0.0",
+  "description": "\"# askEMC\"",
+  "main": "index.js",
+  "dependencies": {
+    "alexa-app": "^2.3.3"
+  },
+  "devDependencies": {},
+  "license": "ISC"
+}

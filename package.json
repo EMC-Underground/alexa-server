@@ -1,0 +1,25 @@
+{
+  "name": "alexa-server",
+  "version": "1.0.0",
+  "description": "Server to be run on Cloud Foundry for hosting Alexa apps",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+    "dependencies": {
+    "alexa-app-server": "*",
+    "alexa-app": "^2.3.3",
+    "aws-sdk": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EMC-Underground/alexa-server.git"
+  },
+  "author": "Dana Young",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EMC-Underground/alexa-server/issues"
+  },
+  "homepage": "https://github.com/EMC-Underground/alexa-server.git#readme"
+}
