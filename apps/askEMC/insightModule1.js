@@ -72,11 +72,42 @@ var insightModule1 = (function () {
 					var speechOutput = 'I had trouble pulling that information. What would you like to do?';
 					
 				} else { // successfully pulled JSON inventory info
+					
+					var addedS = "'s";
+				
+					if (answer == '0') {
+						answer == 'no';
+					}
+					
+					if (reqType.ItemName == 'SYMMETRIX') {
+						reqType.ItemName == 'Sim';
+					}
 
-					var speechOutput = "There are " +
-										answer + ' ' + reqType.ItemName +
-										"'s installed at " +
-										customerInfo.customerName;
+					if (reqType.ItemName == 'CONNECTRIX' || reqType.ItemName == 'POWERPATH') {
+						addedS = "";
+					}				
+
+					var speechOutput = "There are " + answer + ' ' + reqType.ItemName + addedS +
+										" installed at " + customerInfo.customerName;
+										
+					if (reqType.ItemName == 'ESRS') {
+						if (answer == '0') {
+							speechOutput = reqType.ItemName + " is not installed at " + customerInfo.customerName;
+										+ ". You should probably do something about that"
+						} else {
+							speechOutput = reqType.ItemName + " is installed at " + customerInfo.customerName + ". Thank goodness.";
+						}						
+					}
+
+					if (reqType.ItemName == 'SYMMETRIX') {
+						var speechOutput += " That is sims only. If you are interested in VMAX, I can tell you about that too.";				
+					} else if (reqType.ItemName == 'VNX') {
+						var speechOutput += " That is VNX only. If you are interested in Clariion or Unity, I can tell you about them too.";				
+					} else if (reqType.ItemName == 'Clariion') {
+						var speechOutput += " That is Clariion only. If you are interested in VNX or Unity, I can tell you about them too.";
+					} else if (reqType.ItemName == 'Unity') {
+						var speechOutput += " That is Unity only. If you are interested in VNX or Clariion, I can tell you about them too.";
+					}	
 									
 					speechOutput += '. What else are you interested in?';												
 				};	

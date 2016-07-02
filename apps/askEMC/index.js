@@ -26,7 +26,9 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 	repromptOutput, // what to say if the user doesn't answer
 	paginationSize = 3, // specifies the number of customer names to say at one time
 	listOfQuestions = '', // a description for the user of all the questions they can ask 
-	dataTypes = [],
+	dataTypes = [], // an array that gets populated with the different kind of things a user can ask about for a given customer
+					// examples: VNX, RecoverPoint, Avamar, Symmetrix (see insightModule1.addThisDataType )
+					// This can be expanded to include SR information ('Does T-Mobile have any outstanding sev ones?, where 'sev ones' will be a dataType)
 	
 	/****************************************************
 	For each module: Add insight modules below. 
