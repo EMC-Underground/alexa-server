@@ -18,7 +18,8 @@ var getDataFromMunger = (function () {
 
 			s3.getObject(s3params, function(err, data) {
 				if (err) { 
-					callback(err); 
+					console.log('Error getting s3 object: ' + err);
+					callback(); 
 				} else { 
 					// successful response
 					//console.log('data = ' + data.Body.toString() );

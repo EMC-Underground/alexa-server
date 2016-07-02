@@ -256,7 +256,10 @@ function handleOneshotDataRequest(request, response) {
 		// Must call send to end the original request
 		response.send();
         return;
-    }		
+    }
+
+	// no error, so set this so we have access to customer name later
+	response.session('customerInfo', customerInfo);	
 	
     if (reqType.error) {
         // Invalid request type. Set customer in session and prompt for request type which will fire DialogGetDataIntent
@@ -273,7 +276,8 @@ function handleOneshotDataRequest(request, response) {
         return;
     }
 	
-	response.session('dataType', reqType); // not needed immediately, but set this so we have access to user's request type later
+	// no error, so set this so we have access to user's request type later	
+	response.session('dataType', reqType); 
 
     // all slots filled, either from the user or by default values. Move to final request
     getSpecificRequest(customerInfo, reqType, request, response);
@@ -289,18 +293,22 @@ function handleCustomerNameDialogRequest(request, response) {
     var customerInfo = getGdunFromIntent(request);	
 		
     if (customerInfo.error) {
-        // invalid customer. Move to the dialog by prompting to re-fire DialogGetDataIntent
-        repromptOutput = "Currently, I have information about " + CUSTOMERS.length + " customers, but not that one."
-            + "Please try again, which customer would you like information for?";
+        // invalid customer. Move to the dialog by prompting to fire DialogGetDataIntent
         // if we received a value for an unknown customer, repeat it to the user, otherwise we received an empty slot
-        speechOutput = customerInfo.customerName ? "I'm sorry, I don't have any data for " + customerInfo.customerName + ". " + repromptOutput :repromptOutput;
-		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+        speechOutput = "I'm sorry, I don't have any data for ";
+		if (customerInfo.customerName) { 
+			speechOutput += customerInfo.customerName + ". What else can I help you with?";
+		} else {
+			speechOutput += "that. What else can I help you with?";
+		}		
+        repromptOutput = "What else can I help you with?";						
+        response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
-		response.send();		
+		response.send();
         return;
     }
 	
-	// set this so we have access to customer name later
+	// no error, so set this so we have access to customer name later
 	response.session('customerInfo', customerInfo);
 
     // if we don't have the request type yet, go ask for it. If we have the request type, perform the final request
@@ -397,9 +405,8 @@ function getGdunFromIntent(request) {
 			if (!CUSTOMERS.hasOwnProperty(customer)) continue;
 
 			var thisCustomer = CUSTOMERS[customer];
-			console.log('this customer = ' + JSON.stringify(thisCustomer));
 			if (thisCustomer.customer == customerSlot) {
-				console.log('****************************** THERE IS A MATCH *****************')
+				console.log('************* THERE IS A CUSTOMER MATCH *****************')
 				console.log('customer gdun for ' + customerSlot + ' = ' + thisCustomer.gduns)
 				return {
 					customerName: customerSlot,
@@ -437,6 +444,7 @@ function getRequestTypeFromIntent(request) {
 		for (var i = 0; i < dataTypes.length; i++) {
 			// if the dataTypes array contains the data type specified by the user
 			if (dataTypes[i].ItemName == capsDataType) {
+				console.log('************* THERE IS A DATA TYPE MATCH *****************')
 				var dataType = dataTypes[i];
 				return dataType;													
 			}
