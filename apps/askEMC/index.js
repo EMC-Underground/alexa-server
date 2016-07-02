@@ -48,30 +48,17 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 	// Now dataTypes has 3 properties, example: {ItemName: "ATMOS", OpsConsoleName:"Atmos", suffixCode:"1"},
 
 	
+	
+	
+// Below only works if the app runs within the firewall	
 // pull in customer<->GDUN mapping data
 // getCustomerInfoFromECS.getData(function (result) {
 	// CUSTOMERS = result;
 	// console.log('CUSTOMERS = ' + JSON.stringify(CUSTOMERS))
 // });
 
-var custList = 
-[ 
- {
-   "customer":"T-MOBILE",
-   "gduns":327376653
- },
- {
-   "customer":"PSE",
-   "gduns":831703157
- },
- {
-   "customer":"PROVIDENCE HEALTH PLANS",
-   "gduns":884727413
- }
-]
-//CUSTOMERS = custList;
-
-CUSTOMERS = JSON.parse(__dirname + '/customers.json');
+// instead of above, just load local file that is built in the Jenkins PCF deployment process:
+var CUSTOMERS = require('./customers.json');
 console.log('CUSTOMERS = ' + JSON.stringify(CUSTOMERS))
 	
 // on skill launch with no intent specified:
