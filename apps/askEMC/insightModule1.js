@@ -100,13 +100,13 @@ var insightModule1 = (function () {
 					}
 
 					if (reqType.ItemName == 'SYMMETRIX') {
-						var speechOutput += " That is sims only. If you are interested in VMAX, I can tell you about that too.";				
+						speechOutput += " That is sims only. If you are interested in VMAX, I can tell you about that too.";				
 					} else if (reqType.ItemName == 'VNX') {
-						var speechOutput += " That is VNX only. If you are interested in Clariion or Unity, I can tell you about them too.";				
+						speechOutput += " That is VNX only. If you are interested in Clariion or Unity, I can tell you about them too.";				
 					} else if (reqType.ItemName == 'Clariion') {
-						var speechOutput += " That is Clariion only. If you are interested in VNX or Unity, I can tell you about them too.";
+						speechOutput += " That is Clariion only. If you are interested in VNX or Unity, I can tell you about them too.";
 					} else if (reqType.ItemName == 'Unity') {
-						var speechOutput += " That is Unity only. If you are interested in VNX or Clariion, I can tell you about them too.";
+						speechOutput += " That is Unity only. If you are interested in VNX or Clariion, I can tell you about them too.";
 					}	
 									
 					speechOutput += '. What else are you interested in?';												
