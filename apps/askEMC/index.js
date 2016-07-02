@@ -88,15 +88,16 @@ app.intent('OneShotGetDataIntent',
 			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
 			[ 
 				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information}",
-				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {DataType}",				
-				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {DataType}",
-				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {Customer}",	
-				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {Customer}",				
-				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {DataType} {at|for} {Customer}",
-				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {DataType} {at|for} {Customer}",
-				"{how many} {DataType} {arrays|frames|boxes|solutions |} {does} {Customer} {have}",	
-				"{how many} {DataType} {arrays|frames|boxes|solutions |} {are at|are installed at} {Customer}",
-				"Does {Customer} {use|have|own} {DataType}"				
+				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {-|DataType}",				
+				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {-|DataType}",
+				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {-|Customer}",	
+				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {-|Customer}",				
+				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {-|DataType} {at|for} {-|Customer}",
+				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {-|DataType} {at|for} {-|Customer}",
+				"{how many} {-|DataType} {arrays|frames|boxes|solutions |} {does} {-|Customer} {have}",	
+				"{how many} {-|DataType} {arrays|frames|boxes|solutions |} {are at|are installed at} {-|Customer}",
+				"Does {-|Customer} {use|have|own} {any |} {-|DataType} {arrays |}",
+				"Is {-|DataType} {out|installed|used} at {-|Customer}"
 			]
 						
 	},
