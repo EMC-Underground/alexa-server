@@ -245,9 +245,12 @@ function handleOneshotDataRequest(request, response) {
     if (customerInfo.error) {
         // invalid customer. Move to the dialog by prompting to fire DialogGetDataIntent
         // if we received a value for an unknown customer, repeat it to the user, otherwise we received an empty slot
-        speechOutput = customerInfo.customerName ? "I thought I heard you ask about a customer, but I'm sorry, I don't have any data for " 
-						+ customerInfo.customerName + ". Currently, I have information about " + CUSTOMERS.length + " customers, but not that one."
-						+ "What else can I help you with?";
+        speechOutput = "I'm sorry, I don't have any data for ";
+		if (customerInfo.customerName) { 
+			speechOutput += customerInfo.customerName + ". What else can I help you with?";
+		} else {
+			speechOutput += "that. What else can I help you with?";
+		}		
         repromptOutput = "What else can I help you with?";						
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
