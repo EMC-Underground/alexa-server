@@ -74,20 +74,26 @@ var insightModule1 = (function () {
 					console.log('answer = ' + answer );				
 					
 					var addedS = "'s";
+					var isAre = 'are';
 				
 					if (answer == '0') {
-						answer == 'no';
-					}
-					
-					if (reqType.ItemName == 'SYMMETRIX') {
-						reqType.ItemName = 'Symm';
-					}
+						answer = 'no';
+					} else if (answer == '1') {
+						isAre = 'is';
+						addedS = '';
+					} 
 
 					if (reqType.ItemName == 'CONNECTRIX' || reqType.ItemName == 'POWERPATH') {
 						addedS = "";
-					}				
+					}
 
-					var speechOutput = "There are " + answer + ' ' + reqType.ItemName + addedS +
+					if (reqType.ItemName == 'SYMMETRIX') {
+						var productToSay = reqType.ItemName
+					} else {
+						var productToSay = 'Symm'
+					}
+
+					var speechOutput = "There " + isAre + ' ' + answer + ' ' + productToSay + addedS +
 										" installed at " + customerInfo.customerName + '. ';
 										
 					if (reqType.ItemName == 'ESRS') {
@@ -100,9 +106,7 @@ var insightModule1 = (function () {
 					}
 
 					if (reqType.ItemName == 'SYMMETRIX') {
-						speechOutput += "That is sims only. If you are interested in VMAX, I can tell you about that too. ";
-						// reset Symmetrix ItemName
-						reqType.ItemName == 'SYMMETRIX';					
+						speechOutput += "That is sims only. If you are interested in VMAX, I can tell you about that too. ";					
 					} else if (reqType.ItemName == 'VNX') {
 						speechOutput += "That is VNX only. If you\'re interested in Clariion or Unity, Ican tell you about them too. ";				
 					} else if (reqType.ItemName == 'Clariion') {
