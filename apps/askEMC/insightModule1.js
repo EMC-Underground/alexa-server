@@ -56,7 +56,7 @@ var insightModule1 = (function () {
 			callback(dataTypes);						
 		},			
 
-		addResponseLogic: function (customerInfo, reqType, callback) {
+		addResponseLogic: function (customerInfo, reqType, request, response, callback) {
 			var getDataFromMunger = require('./getDataFromMunger') // module to get lightweight sanitized 'insight' from s3			
 			var key = customerInfo.gdun + '.' + reqType.suffixCode;
 			console.log('key being used to retrieve insight: ' + '"' + key + '"');
@@ -119,7 +119,13 @@ var insightModule1 = (function () {
 					
 					// rotate language used
 					var counter = request.session('counter'); // pull the counter from session
-					counter++ // increment the counter
+					if (!counter) { // counter needs to be initialized
+						counter = 1
+					} else {
+						counter++ // increment the counter
+					}
+					
+					console.log('counter = ' + counter);
 					response.session('counter', counter); // re-store the counter in session					
 					
 					if (counter == 1) {

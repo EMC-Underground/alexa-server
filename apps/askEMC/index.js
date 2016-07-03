@@ -63,8 +63,6 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 // instead of above, just load local file that is built in the Jenkins PCF deployment process:
 var CUSTOMERS = require('./customers.json');
 console.log('CUSTOMERS = ' + JSON.stringify(CUSTOMERS))
-
-response.session('counter', 0); // counter controls language used in response, reset for each session
 	
 // on skill launch with no intent specified:
 app.launch( function( request, response ) {	
@@ -591,7 +589,7 @@ function getSpecificRequest(customerInfo, reqType, request, response) {
 	for (var i = 0; i < dataTypes.length; i++) {
 		// if the dataTypes array contains the data type specified by the user
 		if (dataTypes[i].ItemName == reqType.ItemName) {
-			insightModule1.addResponseLogic(customerInfo, reqType, function(userResponseText) {
+			insightModule1.addResponseLogic(customerInfo, reqType, request, response, function(userResponseText) {
 				var repromptOutput = 'What else can I help you with?';
 				response.say(userResponseText).reprompt(repromptOutput).shouldEndSession( false );	
 				// Must call send to end the original request
