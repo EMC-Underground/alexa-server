@@ -24,7 +24,6 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 	app = new alexa.app( 'askEMC' ), // name of this app
 	speechOutput, // what to say back to the user
 	repromptOutput, // what to say if the user doesn't answer
-	response.session('counter', 0); // counter controls language used in response, reset for each session
 	paginationSize = 5, // specifies the number of customer names to say at one time
 	listOfQuestions = '', // a description for the user of all the questions they can ask 
 	dataTypes = [], // an array that gets populated with the different kind of things a user can ask about for a given customer
@@ -64,6 +63,8 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 // instead of above, just load local file that is built in the Jenkins PCF deployment process:
 var CUSTOMERS = require('./customers.json');
 console.log('CUSTOMERS = ' + JSON.stringify(CUSTOMERS))
+
+response.session('counter', 0); // counter controls language used in response, reset for each session
 	
 // on skill launch with no intent specified:
 app.launch( function( request, response ) {	
@@ -77,7 +78,6 @@ app.error = function( exception, request, response ) {
 	console.log(response);	
 	response.say( 'Sorry an error occured ' + error.message);
 };
-
 
 // intent handler for user providing all input in one shot
 app.intent('OneShotGetDataIntent',
