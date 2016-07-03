@@ -115,9 +115,23 @@ var insightModule1 = (function () {
 						speechOutput += "That is Clariion only. If you\'re interested in VNX or Unity, Ican tell you about them too. ";
 					} else if (reqType.ItemName == 'Unity') {
 						speechOutput += "That is Unity only. If you\'re interested in VNX or Clariion, Ican tell you about them too. ";
-					}	
-									
-					speechOutput += '<break time=\"0.4s\" />What else are you interested in?';												
+					}
+					
+					// rotate language used
+					var counter = request.session('counter'); // pull the counter from session
+					counter++ // increment the counter
+					response.session('counter', counter); // re-store the counter in session					
+					
+					if (counter == 1) {
+						speechOutput += '<break time=\"0.4s\" />What else are you interested in?';
+					} else if (counter == 2) {
+						speechOutput += '<break time=\"0.4s\" />What else can I help with?';
+					} else if (counter == 3) {
+						speechOutput += '<break time=\"0.4s\" />What other information would you like to hear?';
+					} else if (counter == 4) {
+						speechOutput += '<break time=\"0.4s\" />What next?';
+						response.session('counter', 0); // reset the counter in session
+					}
 				};	
 				
 				callback(speechOutput);

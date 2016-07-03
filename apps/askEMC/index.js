@@ -24,6 +24,7 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 	app = new alexa.app( 'askEMC' ), // name of this app
 	speechOutput, // what to say back to the user
 	repromptOutput, // what to say if the user doesn't answer
+	response.session('counter', 0); // counter controls language used in response, reset for each session
 	paginationSize = 5, // specifies the number of customer names to say at one time
 	listOfQuestions = '', // a description for the user of all the questions they can ask 
 	dataTypes = [], // an array that gets populated with the different kind of things a user can ask about for a given customer
@@ -426,6 +427,8 @@ function handleNoSlotDialogRequest(request, response) {
 function getGdunFromIntent(request) {
 	console.log('entering getGdunFromIntent function');
 
+	var customerSlot = request.slot('Customer')
+	
     // slots can be missing, or slots can be provided but with empty value.
     // must test for both.
     if (!customerSlot) {
@@ -435,20 +438,19 @@ function getGdunFromIntent(request) {
 
     } else {
         // lookup the customer
-		console.log('raw customer slot = ' + request.slot('Customer'));
-		var customerSlot = request.slot('Customer').toUpperCase();
-		console.log('caps customer slot = ' + customerSlot);		
+		var capsCustomer = customerSlot.toUpperCase();
+		console.log('capsCustomer = ' + capsCustomer );		
 				
 		for (var customer in CUSTOMERS) {
 			// skip loop if the property is from prototype
 			if (!CUSTOMERS.hasOwnProperty(customer)) continue;
 
 			var thisCustomer = CUSTOMERS[customer];
-			if (thisCustomer.customer == customerSlot) {
+			if (thisCustomer.customer == capsCustomer) {
 				console.log('************* THERE IS A CUSTOMER MATCH *****************')
-				console.log('customer gdun for ' + customerSlot + ' = ' + thisCustomer.gduns)
+				console.log('customer gdun for ' + capsCustomer + ' = ' + thisCustomer.gduns)
 				return {
-					customerName: customerSlot,
+					customerName: capsCustomer,
 					gdun: thisCustomer.gduns
 				}
 			}			
@@ -456,7 +458,7 @@ function getGdunFromIntent(request) {
 		
 		return {
 			error: true,
-			customerName: customerSlot
+			customerName: capsCustomer
 		}      
     }
 }
