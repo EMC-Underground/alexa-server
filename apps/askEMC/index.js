@@ -47,12 +47,13 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 	For each module: Add DataType that can be asked about for a given customer 
 	*****************************************************/	
 	insightModule1.addThisDataType(dataTypes, function (dataTypesWithNew) { dataTypes = dataTypesWithNew; });
-	// Now dataTypes has 3 properties, example: {ItemName: "ATMOS", OpsConsoleName:"Atmos", suffixCode:"1"},
+	// Now dataTypes has 3 properties, example: {ItemName: "ATMOS", OpsConsoleName:"Atmos", suffixCode:"1"}
+	console.log('dataTypes = ' + JSON.stringify(dataTypes) );
 
 	
 	
 	
-// Below only works if the app runs within the firewall	
+// Below only works if the app runs within the firewall, so commenting out until secure external location available
 // pull in customer<->GDUN mapping data
 // getCustomerInfoFromECS.getData(function (result) {
 	// CUSTOMERS = result;
@@ -218,7 +219,7 @@ app.intent('StopIntent',
     {"utterances": [ "{stop | end | quit | exit}" ]
     },function(request,response) {
         console.log('REQUEST:  Stopping...');
-        response.say("Stopped.").send();
+        response.say("OK, stopping.").send();
     });
 
 app.intent('CancelIntent',
@@ -372,12 +373,12 @@ function handleDataTypeDialogRequest(request, response) {
 	
     if (reqType.error) {
         // Invalid request type. Prompt for request type which will re-fire DialogGetDataIntent
-		repromptOutput = " What would you like?"
+		repromptOutput = "What would you like?"
         speechOutput = "I can provide information on ";
 		if ( request.session('customerInfo') ) {
 			speechOutput += request.session('customerInfo').customerName;
 		}
-		speechOutput += " inventory, what product would you like to hear about?" + repromptOutput;
+		speechOutput += " inventory, what product would you like to hear about?";
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
 		response.send();
@@ -466,11 +467,10 @@ function getRequestTypeFromIntent(request) {
 	console.log('entering getRequestTypeFromIntent function');
 
     var dataTypeSlot = request.slot('DataType');
-	var capsDataType = dataTypeSlot.toUpperCase();
-	console.log('capsDataType slot = ' + capsDataType );
+
     // slots can be missing, or slots can be provided but with empty value.
     // must test for both.
-    if (!capsDataType) {
+    if (!dataTypeSlot) {
 
         return {
             error: true		
@@ -478,7 +478,11 @@ function getRequestTypeFromIntent(request) {
 		
     } else {
 		
+		var capsDataType = dataTypeSlot.toUpperCase();
+		console.log('capsDataType = ' + capsDataType );
+		
 		for (var i = 0; i < dataTypes.length; i++) {
+			console.log('dataTypes.ItemName = ' + dataTypes[i].ItemName)
 			// if the dataTypes array contains the data type specified by the user
 			if (dataTypes[i].ItemName == capsDataType) {
 				console.log('************* THERE IS A DATA TYPE MATCH *****************')
@@ -486,7 +490,8 @@ function getRequestTypeFromIntent(request) {
 				return dataType;													
 			}
 		}		
-				
+		
+		// if the return above isn't triggered, return error:true because there was no match
 		return {
 			error: true, 
 			displayDataType: capsDataType		
@@ -501,7 +506,7 @@ function handleInitialList(request, response) {
 	console.log('entering handleInitialList function');
 	
 	repromptOutput = "Which customer would you like information for?";
-	speechOutput = "Currently, I know information about these customers: " 
+	speechOutput = "Currently, I know information about " + CUSTOMERS.length + " customers. They include:" 
 
 	var includedName = 0;
 	
