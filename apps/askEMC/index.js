@@ -229,7 +229,7 @@ app.intent('CancelIntent',
     });
 
 app.intent('HelpIntent',
-    {"utterances": [ "{help | help me | give me some help | what can I do | what are my options}" ]
+    {"utterances": [ "{help}" ]
     },function(request,response) {
         console.log('REQUEST:  Help...');
 		handleWelcomeRequest(response);
@@ -436,7 +436,8 @@ function getGdunFromIntent(request) {
 
     } else {
         // lookup the customer
-		var capsCustomer = customerSlot.toUpperCase();
+		var capsCustomerWithPeriods = customerSlot.toUpperCase();
+		capsCustomer = capsCustomerWithPeriods.split('.').join(""); // remove the dots, e.g. ST. LUKES -> ST LUKES
 		console.log('capsCustomer = ' + capsCustomer );		
 				
 		for (var customer in CUSTOMERS) {
