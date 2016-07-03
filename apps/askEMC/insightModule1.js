@@ -88,9 +88,11 @@ var insightModule1 = (function () {
 					}
 
 					if (reqType.ItemName == 'SYMMETRIX') {
-						var productToSay = reqType.ItemName
-					} else {
 						var productToSay = 'Symm'
+					} else if (reqType.ItemName == 'XTREMIO') {
+						var productToSay = 'Extreme I O';						
+					} else {
+						var productToSay = reqType.ItemName;
 					}
 
 					var speechOutput = "There " + isAre + ' ' + answer + ' ' + productToSay + addedS +
