@@ -106,7 +106,7 @@ app.intent('OneShotGetDataIntent',
 						
 	},
  
-function (request, response) { 
+	function (request, response) { 
         console.log('entering OneShotGetDataIntent');
 		console.log('request.slot.Customer = ' + request.slot('Customer'));
 		console.log('request.slot.DataType = ' + request.slot('DataType'));		
@@ -133,7 +133,7 @@ app.intent('DialogGetDataIntent',
 			]
 	},
  
-function (request, response) { 
+	function (request, response) { 
         console.log('entering DialogGetDataIntent');
 		console.log('request.slot.Customer = ' + request.slot('Customer'));
 		console.log('request.slot.DataType = ' + request.slot('DataType'));
@@ -162,7 +162,7 @@ app.intent('SupportedQuestionsIntent',
 			]
 	},
  
-function (request, response) { 
+	function (request, response) { 
         console.log('entering SupportedQuestionsIntent');
 		handleSupportedQuestions(request, response);		
 	}
@@ -178,7 +178,7 @@ app.intent('SupportedCustomersIntent',
 			]
 	},
  
-function (request, response) { 
+	function (request, response) { 
         console.log('entering SupportedCustomersIntent');
 		handleInitialList(request, response);		
 	}
@@ -192,13 +192,27 @@ app.intent('ContinueCustomerListIntent',
 			[ 
 				"{hear | say | tell me} {more | more customers}",
 			]
-	},
+	}, 
  
-function (request, response) { 
+	function (request, response) { 
         console.log('entering SupportedCustomersIntent');
 		handleContinueList(request, response);		
 	}
 );
+
+//TODO implement the yes/no intents
+//app.intent('YesIntent',
+//    {"utterances":config.utterances.Yes
+//    },function(request,response) {
+//        response.say('I heard you say yes, this has not been implemented yet');
+//    });
+//
+//app.intent('NoIntent',
+//    {"utterances":config.utterances.No
+//    },function(request,response) {
+//        response.say('I heard you say no, this has not been implemented yet');
+//    });
+//
 
 app.intent('StopIntent',
     {"utterances": [ "{stop | end | quit | exit}", ]
