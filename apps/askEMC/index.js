@@ -531,7 +531,7 @@ function handleInitialList(request, response) {
 	response.session('includedName', includedName);
 	
 	if (includedName < CUSTOMERS.length) {
-		speechOutput = speechOutput + "To have me continue, say hear more.";
+		speechOutput = speechOutput + "To have me continue, say, hear more.";
 	}	
 
 	response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
@@ -548,6 +548,10 @@ function handleContinueList(request, response) {
 
 	// load from session where we are at in reading off the list of customer names available
 	var includedName = request.session('includedName');
+	
+	if (!includedName) {
+		includedName = 0;
+	}
 	
 	for (i = 0; i < paginationSize; i++) {
 		
