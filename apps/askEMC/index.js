@@ -425,9 +425,7 @@ function handleNoSlotDialogRequest(request, response) {
  */
 function getGdunFromIntent(request) {
 	console.log('entering getGdunFromIntent function');
-	console.log('raw customer slot = ' + request.slot('Customer'));
-    var customerSlot = request.slot('Customer').toUpperCase();
-	console.log('caps customer slot = ' + customerSlot);
+
     // slots can be missing, or slots can be provided but with empty value.
     // must test for both.
     if (!customerSlot) {
@@ -437,6 +435,9 @@ function getGdunFromIntent(request) {
 
     } else {
         // lookup the customer
+		console.log('raw customer slot = ' + request.slot('Customer'));
+		var customerSlot = request.slot('Customer').toUpperCase();
+		console.log('caps customer slot = ' + customerSlot);		
 				
 		for (var customer in CUSTOMERS) {
 			// skip loop if the property is from prototype
