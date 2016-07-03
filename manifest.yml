@@ -1,8 +1,8 @@
 ---
 applications:
-- name: alexaserver
+- name: alexa-app-server
   memory: 512M
   instances: 1
-  host: alexaserverhost
+  host: alexa-app-server-host
   command: node server.js
 

@@ -190,7 +190,7 @@ app.intent('ContinueCustomerListIntent',
 		"utterances":
 		
 			[ 
-				"{hear | say | tell me} {more | more customers}",
+				"{hear | say | tell me} {more | more customers}"
 			]
 	}, 
  
@@ -215,21 +215,21 @@ app.intent('ContinueCustomerListIntent',
 //
 
 app.intent('StopIntent',
-    {"utterances": [ "{stop | end | quit | exit}", ]
+    {"utterances": [ "{stop | end | quit | exit}" ]
     },function(request,response) {
         console.log('REQUEST:  Stopping...');
         response.say("Stopped.").send();
     });
 
 app.intent('CancelIntent',
-    {"utterances": [ "{cancel | cancel that}", ]
+    {"utterances": [ "{cancel | cancel that}" ]
     },function(request,response) {
         console.log('REQUEST:  Cancelling...');
         response.say("Cancelling that.").send();
     });
 
 app.intent('HelpIntent',
-    {"utterances":config.utterances.Help
+    {"utterances": [ "{help | help me | give me some help | what can I do | what are my options}" ]
     },function(request,response) {
         console.log('REQUEST:  Help...');
 		handleWelcomeRequest(response);
