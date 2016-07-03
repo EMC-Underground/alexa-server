@@ -89,7 +89,8 @@ app.intent('OneShotGetDataIntent',
 		"utterances":
 			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
 			[ 
-				"{-|DataType} at {-|Customer}"
+				"{-|DataType} at {-|Customer}",
+				"{-|Customer} {-|DataType}",
 				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information}",
 				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {-|DataType}",				
 				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {-|DataType}",
