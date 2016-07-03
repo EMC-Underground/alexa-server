@@ -200,6 +200,27 @@ function (request, response) {
 	}
 );
 
+app.intent('StopIntent',
+    {"utterances": [ "{stop | end | quit | exit}", ]
+    },function(request,response) {
+        console.log('REQUEST:  Stopping...');
+        response.say("Stopped.").send();
+    });
+
+app.intent('CancelIntent',
+    {"utterances": [ "{cancel | cancel that}", ]
+    },function(request,response) {
+        console.log('REQUEST:  Cancelling...');
+        response.say("Cancelling that.").send();
+    });
+
+app.intent('HelpIntent',
+    {"utterances":config.utterances.Help
+    },function(request,response) {
+        console.log('REQUEST:  Help...');
+		handleWelcomeRequest(response);
+    });
+
 function handleSupportedQuestions(request, response) {
 		
 	speechOutput = 'Here are some questions I can answer: '
