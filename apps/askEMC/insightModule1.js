@@ -100,16 +100,18 @@ var insightModule1 = (function () {
 					}
 
 					if (reqType.ItemName == 'SYMMETRIX') {
-						speechOutput += "That is sims only. If you are interested in VMAX, I can tell you about that too. ";				
+						speechOutput += "That is sims only. If you are interested in VMAX, I can tell you about that too. ";
+						// reset Symmetrix ItemName
+						reqType.ItemName == 'SYMMETRIX';					
 					} else if (reqType.ItemName == 'VNX') {
-						speechOutput += "That is VNX only. If you are interested in Clariion or Unity, I can tell you about them too. ";				
+						speechOutput += "That is VNX only. If you\'re interested in Clariion or Unity, Ican tell you about them too. ";				
 					} else if (reqType.ItemName == 'Clariion') {
-						speechOutput += "That is Clariion only. If you are interested in VNX or Unity, I can tell you about them too. ";
+						speechOutput += "That is Clariion only. If you\'re interested in VNX or Unity, Ican tell you about them too. ";
 					} else if (reqType.ItemName == 'Unity') {
-						speechOutput += "That is Unity only. If you are interested in VNX or Clariion, I can tell you about them too. ";
+						speechOutput += "That is Unity only. If you\'re interested in VNX or Clariion, Ican tell you about them too. ";
 					}	
 									
-					speechOutput += 'What else are you interested in?';												
+					speechOutput += '<break time=\"0.4s\" />What else are you interested in?';												
 				};	
 				
 				callback(speechOutput);
