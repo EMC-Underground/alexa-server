@@ -20,47 +20,89 @@ module.change_code = 1;
 'use strict';
 
 var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
-    //getCustomerInfoFromECS = require('./getCustomerInfoFromECS'), // module to get customer data from ECS object store
 	app = new alexa.app( 'askEMC' ), // name of this app
 	speechOutput, // what to say back to the user
 	repromptOutput, // what to say if the user doesn't answer
 	paginationSize = 5, // specifies the number of customer names to say at one time
 	listOfQuestions = '', // a description for the user of all the questions they can ask 
-	dataTypes = [], // an array that gets populated with the different kind of things a user can ask about for a given customer
-					// examples: VNX, RecoverPoint, Avamar, Symmetrix (see insightModule1.addThisDataType )
-					// This can be expanded to include SR information ('Does T-Mobile have any outstanding sev ones?, where 'sev ones' will be a dataType)
+	dataTypes = [], // an array that gets populated with other arrays, each of which contain the different kind of things 
+					// a user can ask about for a given customer.
+					// examples: 	dataTypes[0] = VNX, RecoverPoint, Avamar, Symmetrix (see insightModule1.addThisDataType )
+					//				dataTypes[1] = Washington, Oregon, Idaho, Arizona, California
+					// This can be expanded to include SR information, such as answering the question:
+					// 'Does T-Mobile have any outstanding sev ones?, where 'sev ones' will be a dataType array
+	
+/****************************************************
+For each module: Add insight modules below. 
+*****************************************************/
+var insightModule1 = require('./insightModule1'),
+var insightModule2 = require('./insightModule2');	
+	
+	
+/****************************************************
+For each module: Add the question that can be asked by a user. 
+*****************************************************/	
+listOfQuestions += insightModule1.addThisQuestion(); 
+listOfQuestions += insightModule2.addThisQuestion(); 
+
+
+/****************************************************
+For each module: Add DataType that can be asked about for a given customer 
+*****************************************************/	
+dataTypes[0] = [] // the 1st item in the dataTypes array is a new empty array we will now populate with products
+insightModule1.addThisDataType(dataTypes[0], function (subDataTypesAdded) { dataTypes[0] = subDataTypesAdded; });
+// Now dataTypes[0] holds an array of products, each one is an object such as: {ItemName: "ATMOS", OpsConsoleName:"Atmos", suffixCode:"1"}
+
+dataTypes[1] = [] // the 2nd item in the dataTypes array is a new empty array we will now populate with states
+insightModule2.addThisDataType(dataTypes, function (subDataTypesAdded) { dataTypes = subDataTypesAdded; });
+// Now dataTypes[1] holds an array of states, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
+
+
+
+console.log('dataTypes = ' + JSON.stringify(dataTypes) );
+
+
+/**
+ * Both the one-shot and dialog based paths lead to this method to get the specific request the user is looking for
+ */
+function getSpecificRequest(customerInfo, reqType, request, response) {
+	console.log('entering getSpecificRequest function');
+	console.log('customerInfo.gdun = ' + customerInfo.gdun);
+	console.log('reqType.ItemName = ' + reqType.ItemName);
 	
 	/****************************************************
-	For each module: Add insight modules below. 
-	*****************************************************/
-	insightModule1 = require('./insightModule1');
+	Add one entry for each module below
+	*****************************************************/	
+	// 		
+	for (var i = 0; i < dataTypes.length; i++) { // loop through each dataType (dataType[0] is products, dataType[1] is states...)
 		
-	
-	/****************************************************
-	For each module: Add the question that can be asked by a user. 
-	*****************************************************/	
-	listOfQuestions += insightModule1.addThisQuestion(); // add to list of questions a user can ask 
+		for (var x = 0; x < dataTypes[i].length; x++) { // loop through each array of possible dataType items (ex: products)
+		
+			if (dataTypes[i][x].ItemName == reqType.ItemName) { //if one of the dataType items matches what the user specified
+			
+				if (i == 0) { // if item was a match in the 1st array, we know it was a product aka insightModule1 should be used
+					insightModule1.addResponseLogic(customerInfo, reqType, request, response, function(userResponseText) { // get the response to give the user
+						var repromptOutput = 'What else can I help you with?';
+						response.say(userResponseText).reprompt(repromptOutput).shouldEndSession( false );	
+						// Must call send to end the original request
+						response.send();
+					});						
+				} else if (i == 1) { // if item was a match in the 2nd array, we know it was a state aka insightModule2 should be used
+					insightModule2.addResponseLogic(customerInfo, reqType, request, response, function(userResponseText) { // get the response to give the user
+						var repromptOutput = 'What else can I help you with?';
+						response.say(userResponseText).reprompt(repromptOutput).shouldEndSession( false );	
+						// Must call send to end the original request
+						response.send();
+					});	
+				}					
+			}
+		}
+	}	
+}
 
 	
-	
-	/****************************************************
-	For each module: Add DataType that can be asked about for a given customer 
-	*****************************************************/	
-	insightModule1.addThisDataType(dataTypes, function (dataTypesWithNew) { dataTypes = dataTypesWithNew; });
-	// Now dataTypes has 3 properties, example: {ItemName: "ATMOS", OpsConsoleName:"Atmos", suffixCode:"1"}
-	console.log('dataTypes = ' + JSON.stringify(dataTypes) );
 
-	
-	
-	
-// Below only works if the app runs within the firewall, so commenting out until secure external location available
-// pull in customer<->GDUN mapping data
-// getCustomerInfoFromECS.getData(function (result) {
-	// CUSTOMERS = result;
-	// console.log('CUSTOMERS = ' + JSON.stringify(CUSTOMERS))
-// });
-
-// instead of above, just load local file that is built in the Jenkins PCF deployment process:
+// load the local file that is built in the Jenkins PCF deployment process:
 var CUSTOMERS = require('./customers.json');
 console.log('CUSTOMERS = ' + JSON.stringify(CUSTOMERS))
 	
@@ -91,6 +133,7 @@ app.intent('OneShotGetDataIntent',
 			[ 
 				"{-|DataType} at {-|Customer}",
 				"{-|Customer} {-|DataType}",
+				"{-|Customer} in {-|DataType}",
 				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information}",
 				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {data|some data|information|some information} {on|about} {-|DataType}",				
 				"{get|get me|get me any|tell|tell me|tell me any|tell me about|tell me about any|give|give me|give me any} {-|DataType}",
@@ -101,7 +144,8 @@ app.intent('OneShotGetDataIntent',
 				"{how many} {-|DataType} {arrays|frames|boxes|solutions |} {does} {-|Customer} {have}",	
 				"{how many} {-|DataType} {arrays|frames|boxes|solutions |} {are at|are installed at} {-|Customer}",
 				"Does {-|Customer} {use|have|own} {any |} {-|DataType} {arrays |}",
-				"Is {-|DataType} {out|installed|used} at {-|Customer}"
+				"Is {-|DataType} {out|installed|used} at {-|Customer}",
+				"How many {systems|products|solutions} does {-|Customer} have in {-|DataType}"
 			]
 						
 	},
@@ -578,30 +622,6 @@ function handleContinueList(request, response) {
 	response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 }
 
-/**
- * Both the one-shot and dialog based paths lead to this method to get the specific request the user is looking for
- */
-function getSpecificRequest(customerInfo, reqType, request, response) {
-	console.log('entering getSpecificRequest function');
 
-	console.log('customerInfo.gdun = ' + customerInfo.gdun);
-	console.log('reqType.ItemName = ' + reqType.ItemName);
-	
-	/****************************************************
-	Add one entry for each module below
-	*****************************************************/	
-	// if the dataTypes array contains the product data type specified by the user		
-	for (var i = 0; i < dataTypes.length; i++) {
-		// if the dataTypes array contains the data type specified by the user
-		if (dataTypes[i].ItemName == reqType.ItemName) {
-			insightModule1.addResponseLogic(customerInfo, reqType, request, response, function(userResponseText) {
-				var repromptOutput = 'What else can I help you with?';
-				response.say(userResponseText).reprompt(repromptOutput).shouldEndSession( false );	
-				// Must call send to end the original request
-				response.send();
-			});		
-		}
-	}	
-}
 
 module.exports = app;
