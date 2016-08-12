@@ -25,7 +25,7 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 	repromptOutput, // what to say if the user doesn't answer
 	paginationSize = 5, // specifies the number of customer names to say at one time
 	listOfQuestions = '', // a description for the user of all the questions they can ask 
-	dataTypes = [], // an array that gets populated with other arrays, each of which contain the different kind of things 
+	dataTypes = []; // an array that gets populated with other arrays, each of which contain the different kind of things 
 					// a user can ask about for a given customer.
 					// examples: 	dataTypes[0] = VNX, RecoverPoint, Avamar, Symmetrix (see insightModule1.addThisDataType )
 					//				dataTypes[1] = Washington, Oregon, Idaho, Arizona, California
@@ -35,8 +35,9 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 /****************************************************
 For each module: Add insight modules below. 
 *****************************************************/
-var insightModule1 = require('./insightModule1'),
+var insightModule1 = require('./insightModule1');
 var insightModule2 = require('./insightModule2');	
+var insightModule3 = require('./insightModule3');
 	
 	
 /****************************************************
@@ -44,6 +45,7 @@ For each module: Add the question that can be asked by a user.
 *****************************************************/	
 listOfQuestions += insightModule1.addThisQuestion(); 
 listOfQuestions += insightModule2.addThisQuestion(); 
+listOfQuestions += insightModule3.addThisQuestion();
 
 
 /****************************************************
@@ -56,6 +58,10 @@ insightModule1.addThisDataType(dataTypes[0], function (subDataTypesAdded) { data
 dataTypes[1] = [] // the 2nd item in the dataTypes array is a new empty array we will now populate with states
 insightModule2.addThisDataType(dataTypes, function (subDataTypesAdded) { dataTypes = subDataTypesAdded; });
 // Now dataTypes[1] holds an array of states, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
+
+dataTypes[2] = [] // the 2nd item in the dataTypes array is a new empty array we will now populate with serial numbers
+insightModule3.addThisDataType(dataTypes, function (subDataTypesAdded) { dataTypes = subDataTypesAdded; });
+// Now dataTypes[2] holds an array of serial numbers, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
 
 
 
@@ -119,7 +125,8 @@ app.error = function( exception, request, response ) {
 	response.say( 'Sorry an error occured ' + error.message);
 };
 
-// intent handler for user providing all input in one shot
+// intent handler for user providing either neither, one or both of the following: 1) Customer and 2) dataType, where dataType is from predefined list
+// examples of dataType include products (VMAX, VNX etc...), states where gear may be installed (WA, OR etc...), serial number ('HK....')
 app.intent('OneShotGetDataIntent',
 	{	  
 		"slots": 
@@ -145,7 +152,8 @@ app.intent('OneShotGetDataIntent',
 				"{how many} {-|DataType} {arrays|frames|boxes|solutions |} {are at|are installed at} {-|Customer}",
 				"Does {-|Customer} {use|have|own} {any |} {-|DataType} {arrays |}",
 				"Is {-|DataType} {out|installed|used} at {-|Customer}",
-				"How many {systems|products|solutions} does {-|Customer} have in {-|DataType}"
+				"How many {systems|products|solutions} does {-|Customer} have in {-|DataType}",
+				"Get me an S.O. number for {-|Customer}" 
 			]
 						
 	},
@@ -160,13 +168,13 @@ app.intent('OneShotGetDataIntent',
 	}
 );
 
-// intent handler for user providing one piece of input, prompt for the rest
+// intent handler for user providing one piece of input between dataType and Customer, prompt for the other if data is not already stored in session.
 app.intent('DialogGetDataIntent',
 	{	  
 		"slots": 
 			{
 				"Customer": "CUSTOMER", // format is 'CustomSlotName: CustomSlotType'. CustomSlotType must be specified in the skill interface's interaction model
-				"DataType": "DATATYPE"
+				"DataType": "DATATYPE"	// same as above
 			},
 	   
 		"utterances":
@@ -397,7 +405,7 @@ function handleCustomerNameDialogRequest(request, response) {
         getSpecificRequest(customerInfo, request.session('dataType'), request, response);
     } else {
         // prompt for request type
-        repromptOutput = "I can tell you about EMC products that are installed there, and more things to come.";
+        repromptOutput = "Options include product names, states and serial numbers. ";
         speechOutput = "What would you like to hear about for " + customerInfo.customerName + "?";
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
@@ -421,7 +429,7 @@ function handleDataTypeDialogRequest(request, response) {
 		if ( request.session('customerInfo') ) {
 			speechOutput += request.session('customerInfo').customerName;
 		}
-		speechOutput += " inventory, what product would you like to hear about?";
+		speechOutput += " products, states and serial numbers. What would you like to hear about?";
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
 		response.send();
@@ -452,7 +460,7 @@ function handleNoSlotDialogRequest(request, response) {
 	
     if ( request.session('customerInfo') ) {
         // get request type re-prompt
-        repromptOutput = "What product are you interested in hearing about?";
+        repromptOutput = "What are you interested in hearing about? Options include product names, serial numbers and states.";
         speechOutput = repromptText;
 		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
