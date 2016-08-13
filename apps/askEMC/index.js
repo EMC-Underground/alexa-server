@@ -37,7 +37,7 @@ For each module: Add insight modules below.
 *****************************************************/
 var insightModule1 = require('./insightModule1');
 var insightModule2 = require('./insightModule2');	
-var insightModule3 = require('./insightModule3');
+// var insightModule3 = require('./insightModule3');
 	
 	
 /****************************************************
@@ -45,7 +45,7 @@ For each module: Add the question that can be asked by a user.
 *****************************************************/	
 listOfQuestions += insightModule1.addThisQuestion(); 
 listOfQuestions += insightModule2.addThisQuestion(); 
-listOfQuestions += insightModule3.addThisQuestion();
+// listOfQuestions += insightModule3.addThisQuestion();
 
 
 /****************************************************
@@ -56,17 +56,25 @@ insightModule1.addThisDataType(dataTypes[0], function (subDataTypesAdded) { data
 // Now dataTypes[0] holds an array of products, each one is an object such as: {ItemName: "ATMOS", OpsConsoleName:"Atmos", suffixCode:"1"}
 
 dataTypes[1] = [] // the 2nd item in the dataTypes array is a new empty array we will now populate with states
-insightModule2.addThisDataType(dataTypes, function (subDataTypesAdded) { dataTypes = subDataTypesAdded; });
+insightModule2.addThisDataType(dataTypes[1], function (subDataTypesAdded) { dataTypes[1] = subDataTypesAdded; });
 // Now dataTypes[1] holds an array of states, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
 
-dataTypes[2] = [] // the 2nd item in the dataTypes array is a new empty array we will now populate with serial numbers
-insightModule3.addThisDataType(dataTypes, function (subDataTypesAdded) { dataTypes = subDataTypesAdded; });
+// dataTypes[2] = [] // the 3rd item in the dataTypes array is a new empty array we will now populate with serial numbers
+// insightModule3.addThisDataType(dataTypes[2], function (subDataTypesAdded) { dataTypes[2] = subDataTypesAdded; });
 // Now dataTypes[2] holds an array of serial numbers, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
 
+console.log('**************************************************************************************************************')
 
+for (var i = 0; i < dataTypes.length; i++) { // loop through each dataType (dataType[0] is products, dataType[1] is states...)
+	
+	for (var x = 0; x < dataTypes[i].length; x++) { // loop through each array of possible dataType items (ex: products)
 
-console.log('dataTypes = ' + JSON.stringify(dataTypes) );
+		console.log('dataTypes[' + i + '][' + x + '] = ' + JSON.stringify(dataTypes[i][x]) );		
 
+	}
+}
+
+console.log('**************************************************************************************************************')
 
 /**
  * Both the one-shot and dialog based paths lead to this method to get the specific request the user is looking for
@@ -535,15 +543,20 @@ function getRequestTypeFromIntent(request) {
 		var capsDataType = dataTypeSlot.toUpperCase();
 		console.log('capsDataType = ' + capsDataType );
 		
-		for (var i = 0; i < dataTypes.length; i++) {
-			console.log('dataTypes.ItemName = ' + dataTypes[i].ItemName)
-			// if the dataTypes array contains the data type specified by the user
-			if (dataTypes[i].ItemName == capsDataType) {
-				console.log('************* THERE IS A DATA TYPE MATCH *****************')
-				var dataType = dataTypes[i];
-				return dataType;													
+		
+		for (var i = 0; i < dataTypes.length; i++) { // loop through each dataType (dataType[0] is products, dataType[1] is states...)
+			
+			for (var x = 0; x < dataTypes[i].length; x++) { // loop through each array of possible dataType items (ex: products)
+			
+				console.log('dataTypes[i][x].ItemName = ' + dataTypes[i][x].ItemName)
+				if (dataTypes[i][x].ItemName == capsDataType) { //if one of the dataType items matches what the user specified				
+					console.log('************* THERE IS A DATA TYPE MATCH *****************')
+					var dataType = dataTypes[i][x];
+					dataType.displayDataType = capsDataType;
+					return dataType;						
+				}
 			}
-		}		
+		}					
 		
 		// if the return above isn't triggered, return error:true because there was no match
 		return {

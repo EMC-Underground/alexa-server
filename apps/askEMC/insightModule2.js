@@ -9,14 +9,15 @@ var insightModule2 = (function () {
 		},	
 	
 		addThisDataType: function (subDataTypes, callback) {
+			console.log('entering insightModule2 addThisDataType function')
 			
 			subDataTypes.push(
 			
-				{ItemName: "Washington", 	OpsConsoleName: "WA", 	suffixCode: "1"},
-				{ItemName: "Oregon", 		OpsConsoleName: "OR", 	suffixCode: "2"},
-				{ItemName: "Idaho", 		OpsConsoleName: "ID", 	suffixCode: "3"},
-				{ItemName: "Arizona", 		OpsConsoleName: "AZ", 	suffixCode: "4"},
-				{ItemName: "California", 	OpsConsoleName: "CA", 	suffixCode: "5"}  );
+				{ItemName: "WASHINGTON", 	OpsConsoleName: "WA", 	suffixCode: "1"},
+				{ItemName: "OREGON", 		OpsConsoleName: "OR", 	suffixCode: "2"},
+				{ItemName: "IDAHO", 		OpsConsoleName: "ID", 	suffixCode: "3"},
+				{ItemName: "ARIZONA", 		OpsConsoleName: "AZ", 	suffixCode: "4"},
+				{ItemName: "CALIFORNIA", 	OpsConsoleName: "CA", 	suffixCode: "5"}  );
 						
 			callback(subDataTypes);						
 		},			
