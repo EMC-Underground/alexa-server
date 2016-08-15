@@ -37,7 +37,7 @@ For each module: Add insight modules below.
 *****************************************************/
 var insightModule1 = require('./insightModule1');
 var insightModule2 = require('./insightModule2');	
-// var insightModule3 = require('./insightModule3');
+
 	
 	
 /****************************************************
@@ -45,7 +45,7 @@ For each module: Add the question that can be asked by a user.
 *****************************************************/	
 listOfQuestions += insightModule1.addThisQuestion(); 
 listOfQuestions += insightModule2.addThisQuestion(); 
-// listOfQuestions += insightModule3.addThisQuestion();
+
 
 
 /****************************************************
@@ -59,9 +59,6 @@ dataTypes[1] = [] // the 2nd item in the dataTypes array is a new empty array we
 insightModule2.addThisDataType(dataTypes[1], function (subDataTypesAdded) { dataTypes[1] = subDataTypesAdded; });
 // Now dataTypes[1] holds an array of states, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
 
-// dataTypes[2] = [] // the 3rd item in the dataTypes array is a new empty array we will now populate with serial numbers
-// insightModule3.addThisDataType(dataTypes[2], function (subDataTypesAdded) { dataTypes[2] = subDataTypesAdded; });
-// Now dataTypes[2] holds an array of serial numbers, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
 
 console.log('**************************************************************************************************************')
 
@@ -134,7 +131,7 @@ app.error = function( exception, request, response ) {
 };
 
 // intent handler for user providing either neither, one or both of the following: 1) Customer and 2) dataType, where dataType is from predefined list
-// examples of dataType include products (VMAX, VNX etc...), states where gear may be installed (WA, OR etc...), serial number ('HK....')
+// examples of dataType include products (VMAX, VNX etc...), states where gear may be installed (WA, OR etc...), ...
 app.intent('OneShotGetDataIntent',
 	{	  
 		"slots": 
@@ -160,8 +157,7 @@ app.intent('OneShotGetDataIntent',
 				"{how many} {-|DataType} {arrays|frames|boxes|solutions |} {are at|are installed at} {-|Customer}",
 				"Does {-|Customer} {use|have|own} {any |} {-|DataType} {arrays |}",
 				"Is {-|DataType} {out|installed|used} at {-|Customer}",
-				"How many {systems|products|solutions} does {-|Customer} have in {-|DataType}",
-				"Get me an S.O. number for {-|Customer}" 
+				"How many {systems|products|solutions} does {-|Customer} have in {-|DataType}" 
 			]
 						
 	},
@@ -209,6 +205,54 @@ app.intent('DialogGetDataIntent',
         }		
 		// Return false immediately so alexa-app doesn't send the response
 		return false;	
+	}
+);
+
+// intent handler for user asking for an SO number for a given customer
+app.intent('GetSOIntent',
+	{	  
+		"slots": 
+			{
+				"Customer": "CUSTOMER"
+			},
+	   
+		"utterances":
+			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
+			[ 
+				"{get|get me|tell me|what is} an S.O. number for {-|Customer}"
+			]						
+	},
+ 
+	function (request, response) { 
+        console.log('entering GetSOIntent');
+		console.log('request.slot.Customer = ' + request.slot('Customer'));	
+		handleSOrequest(request, response);
+		// Return false immediately so alexa-app doesn't send the response
+		return false;
+	}
+);
+
+// intent handler for user providing a serial number in order to hear the corresponding SO number
+app.intent('SerialNumberProvidedIntent',
+	{	  
+		"slots": 
+			{
+				"SN": "SERIALNUMBER"
+			},
+	   
+		"utterances":
+			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
+			[ 
+				"{SN|serial number} {-|SN}"
+			]						
+	},
+ 
+	function (request, response) { 
+        console.log('entering SerialNumberProvidedIntent');
+		console.log('request.slot.SN = ' + request.slot('SN'));
+		handleSerialNumberProvided(request, response);
+		// Return false immediately so alexa-app doesn't send the response
+		return false;
 	}
 );
 
@@ -644,5 +688,109 @@ function handleContinueList(request, response) {
 }
 
 
+/**
+ * Handles the case where the user asks for an SO number for a given customer
+ */
+function handleSOrequest(request, response) {
+	console.log('entering handleSOrequest function');
+
+    // Determine customer the user is interested in
+    var customerInfo = getGdunFromIntent(request);
+	
+	response.session('customerInfo', customerInfo); // not needed immediately, but set this so we have access to customer name later
+
+	console.log('customerInfo = ' + JSON.stringify(customerInfo));
+	
+    if (customerInfo.error) {
+        // invalid customer. Move to the dialog by prompting to fire DialogGetDataIntent
+        // if we received a value for an unknown customer, repeat it to the user, otherwise we received an empty slot
+        speechOutput = "I'm sorry, I don't have any data for ";
+		if (customerInfo.customerName) { 
+			speechOutput += customerInfo.customerName + ". What else can I help you with?";
+		} else {
+			speechOutput += "that. What else can I help you with?";
+		}		
+        repromptOutput = "What else can I help you with?";						
+        response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+		// Must call send to end the original request
+		response.send();
+        return;
+    }
+
+	// no error, so set this so we have access to customer name later
+	response.session('customerInfo', customerInfo);	
+
+    // customer slot filled, prompt for serial number
+	speechOutput = "OK. For what serial number";
+	if (customerInfo.customerName) { 
+		speechOutput += " at " + customerInfo.customerName + "?";
+	} else {
+		speechOutput += "?";
+	}		
+	repromptOutput = "For what serial number?";						
+	response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+	// Must call send to end the original request
+	response.send();
+	return;
+}
+
+
+/**
+ * Handles the case where the user provides a serial number in order to hear a corresponding SO number
+ */
+function handleSerialNumberProvided(request, response) {
+	console.log('entering handleSerialNumberProvided function');
+	
+	var customerInfo = request.session('customerInfo')
+	var getDataFromMunger = require('./getDataFromMunger') // module to get lightweight sanitized 'insight' from s3			
+	var key = customerInfo.gdun + '.SNSO.3'; // the .3 refers to munger3
+	console.log('key being used to retrieve insight: ' + '"' + key + '"');
+	
+	getDataFromMunger.getData(key, function (result) {	
+		
+		if (!result) {
+
+			var speechOutput = 'That information doesn\'t seem to be available right now. Can I help with something else?';
+			
+		} else { // successfully pulled JSON inventory info
+			console.log('result body = ' + result );
+			var parsedResult = JSON.parse(result);
+			
+			for (var i = 0; i < parsedResult.length; i++) {
+				if (parsedResult[i].SN == reqType.SN) {
+					var answer = parsedResult[i].SO;
+				}
+			}					
+		
+			console.log('answer = ' + answer );				
+			
+			var speechOutput = 'That S.O. number is ' + answer;
+			
+			// rotate language used
+			var counter = request.session('counter'); // pull the counter from session
+			if (!counter) { // counter needs to be initialized
+				counter = 1
+			} else {
+				counter++ // increment the counter
+			}
+			
+			console.log('counter = ' + counter);
+			response.session('counter', counter); // re-store the counter in session					
+			
+			if (counter == 1) {
+				speechOutput += '<break time=\"0.4s\" />What else are you interested in?';
+			} else if (counter == 2) {
+				speechOutput += '<break time=\"0.4s\" />What else can I help with?';
+			} else if (counter == 3) {
+				speechOutput += '<break time=\"0.4s\" />What other information would you like to hear?';
+			} else if (counter == 4) {
+				speechOutput += '<break time=\"0.4s\" />What next?';
+				response.session('counter', 0); // reset the counter in session
+			}
+		};	
+		
+		callback(speechOutput);
+	});						
+}
 
 module.exports = app;
