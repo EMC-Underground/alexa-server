@@ -755,9 +755,10 @@ function handleSerialNumberProvided(request, response) {
 		} else { // successfully pulled JSON inventory info
 			console.log('result body = ' + result );
 			var parsedResult = JSON.parse(result);
-			
+			console.log('SN we are looking for = ' + request.slot('SN'));
 			for (var i = 0; i < parsedResult.length; i++) {
-				if (parsedResult[i].SN == reqType.SN) {
+				console.log('SN of this item = ' + parsedResult[i].SN)
+				if (parsedResult[i].SN == request.slot('SN')) {
 					var answer = parsedResult[i].SO;
 				}
 			}					
@@ -789,7 +790,10 @@ function handleSerialNumberProvided(request, response) {
 			}
 		};	
 		
-		callback(speechOutput);
+		var repromptOutput = 'What else can I help you with?';
+		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );	
+		// Must call send to end the original request
+		response.send();
 	});						
 }
 
