@@ -353,7 +353,7 @@ function handleSupportedQuestions(request, response) {
 
 function handleWelcomeRequest(response) {
 	speechOutput = 'Hi there. I can provide quick customer info on the go. ' 
-				+ 'Which customer would you like information for?';
+				+ 'How can I help?';
 
 	repromptOutput = 
 		"I can lead you through providing a customer name and "
