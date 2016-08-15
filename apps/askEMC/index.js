@@ -219,7 +219,8 @@ app.intent('GetSOIntent',
 		"utterances":
 			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
 			[ 
-				"{get|get me|tell me|what is} an S.O. number for {-|Customer}"
+				"{for|get|get me|tell me|what is|I need|about} an S.O. number for {-|Customer}",
+				"{for|get|get me|tell me|what is|I need|about} an S.O. number"
 			]						
 	},
  
@@ -708,9 +709,9 @@ function handleSOrequest(request, response) {
 		if (customerInfo.customerName) { 
 			speechOutput += customerInfo.customerName + ". What else can I help you with?";
 		} else {
-			speechOutput += "that. What else can I help you with?";
+			speechOutput = "For what customer?";
 		}		
-        repromptOutput = "What else can I help you with?";						
+        repromptOutput = "For what customer?";						
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
 		response.send();
@@ -718,7 +719,10 @@ function handleSOrequest(request, response) {
     }
 
 	// no error, so set this so we have access to customer name later
-	response.session('customerInfo', customerInfo);	
+	response.session('customerInfo', customerInfo);
+	
+	// set a flag to indicate that an SO number request is in process
+	response.session('SOrequest', 'TRUE');	
 
     // customer slot filled, prompt for serial number
 	speechOutput = "OK. For what serial number";
