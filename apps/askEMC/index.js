@@ -765,7 +765,7 @@ function handleSerialNumberProvided(request, response) {
 		
 			console.log('answer = ' + answer );				
 			
-			var speechOutput = 'That S.O. number is ' + answer;
+			var speechOutput = 'That S.O. number is <say-as interpret-as="digits">' + answer + '</say-as> ';
 			
 			// rotate language used
 			var counter = request.session('counter'); // pull the counter from session
