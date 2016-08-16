@@ -61,7 +61,6 @@ insightModule2.addThisDataType(dataTypes[1], function (subDataTypesAdded) { data
 
 
 console.log('**************************************************************************************************************')
-
 for (var i = 0; i < dataTypes.length; i++) { // loop through each dataType (dataType[0] is products, dataType[1] is states...)
 	
 	for (var x = 0; x < dataTypes[i].length; x++) { // loop through each array of possible dataType items (ex: products)
@@ -70,7 +69,6 @@ for (var i = 0; i < dataTypes.length; i++) { // loop through each dataType (data
 
 	}
 }
-
 console.log('**************************************************************************************************************')
 
 /**
@@ -762,6 +760,9 @@ function handleSOrequest(request, response) {
  */
 function handleSerialNumberProvided(request, response) {
 	console.log('entering handleSerialNumberProvided function');
+	
+	// reset SOrequest flag
+	response.session('SOrequest', 'FALSE');
 	
 	var customerInfo = request.session('customerInfo')
 	var getDataFromMunger = require('./getDataFromMunger') // module to get lightweight sanitized 'insight' from s3			
