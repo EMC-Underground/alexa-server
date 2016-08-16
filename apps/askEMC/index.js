@@ -775,12 +775,20 @@ function handleSerialNumberProvided(request, response) {
 			var speechOutput = 'That information doesn\'t seem to be available right now. Can I help with something else?';
 			
 		} else { // successfully pulled JSON inventory info
-			console.log('result body = ' + result );
+			//console.log('result body = ' + result );
 			var parsedResult = JSON.parse(result);
-			console.log('SN we are looking for = ' + request.slot('SN'));
+			console.log('SN as interpreted = ' + request.slot('SN'));
+			
+			// remove any spaces and make all caps
+			var SN = request.slot('SN');
+			SN = SN.replace(/\s/g,'');
+			SN = SN.toUpperCase();
+			
+			console.log('cleaned up SN = ' + SN);
+			
 			for (var i = 0; i < parsedResult.length; i++) {
-				console.log('SN of this item = ' + parsedResult[i].SN)
-				if (parsedResult[i].SN == request.slot('SN')) {
+				//console.log('SN of this item = ' + parsedResult[i].SN)
+				if (parsedResult[i].SN == SN) {
 					var answer = parsedResult[i].SO;
 				}
 			}					
