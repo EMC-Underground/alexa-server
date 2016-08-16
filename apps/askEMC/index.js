@@ -219,8 +219,9 @@ app.intent('GetSOIntent',
 		"utterances":
 			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
 			[ 
-				"{for|get|get me|tell me|what is|I need|about} an S.O. number for {-|Customer}",
-				"{for|get|get me|tell me|what is|I need|about} an S.O. number"
+				"{for|get|get me|tell me|what is|I need|about} {an S.O.|an S.O. number|S.O.|S.O. number|sales order|sales order number} for {-|Customer}",
+				"{for|get|get me|tell me|what is|I need|about} an S.O. number",
+				"{S.O.|S.O. number|sales order|sales order number} {information|data|info} for {-|Customer}"
 			]						
 	},
  
@@ -457,12 +458,27 @@ function handleCustomerNameDialogRequest(request, response) {
     if ( request.session('dataType') ) {
         getSpecificRequest(customerInfo, request.session('dataType'), request, response);
     } else {
-        // prompt for request type
-        repromptOutput = "Options include product names, states and serial numbers. ";
-        speechOutput = "What would you like to hear about for " + customerInfo.customerName + "?";
-        response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
-		// Must call send to end the original request
-		response.send();
+		if (request.session('SOrequest') == 'TRUE') {
+			// customer slot filled, prompt for serial number
+			speechOutput = "OK. For what serial number";
+			if (customerInfo.customerName) { 
+				speechOutput += " at " + customerInfo.customerName + "?";
+			} else {
+				speechOutput += "?";
+			}		
+			repromptOutput = "For what serial number?";						
+			response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+			// Must call send to end the original request
+			response.send();		
+		} else {
+			// prompt for request type
+			repromptOutput = "Options include product names, states and serial numbers. ";
+			speechOutput = "What would you like to hear about for " + customerInfo.customerName + "?";
+			response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+			// Must call send to end the original request
+			response.send();			
+		}
+
     }
 }
 
@@ -711,7 +727,11 @@ function handleSOrequest(request, response) {
 		} else {
 			speechOutput = "For what customer?";
 		}		
-        repromptOutput = "For what customer?";						
+        repromptOutput = "For what customer?";	
+		
+		// set a flag to indicate that an SO number request is in process
+		response.session('SOrequest', 'TRUE');	
+		
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
 		response.send();
@@ -719,10 +739,7 @@ function handleSOrequest(request, response) {
     }
 
 	// no error, so set this so we have access to customer name later
-	response.session('customerInfo', customerInfo);
-	
-	// set a flag to indicate that an SO number request is in process
-	response.session('SOrequest', 'TRUE');	
+	response.session('customerInfo', customerInfo);	
 
     // customer slot filled, prompt for serial number
 	speechOutput = "OK. For what serial number";
