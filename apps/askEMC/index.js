@@ -800,7 +800,7 @@ function handleSerialNumberProvided(request, response) {
 			console.log('answer = ' + answer );				
 			
 			if (answer == 'TBD') {
-				var skipExtraPrompt = TRUE;
+				var skipExtraPrompt = 'TRUE';
 				var speechOutput = 'I heard you say: <say-as interpret-as="digits">' + SN + '</say-as> , either I heard wrong or that serial number isn\'t valid. Please try again.';
 			} else {
 				var speechOutput = 'That S.O. number is <say-as interpret-as="digits">' + answer + '</say-as> ';
