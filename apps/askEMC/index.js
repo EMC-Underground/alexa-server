@@ -783,6 +783,7 @@ function handleSerialNumberProvided(request, response) {
 			var SN = request.slot('SN');
 			SN = SN.replace(/\s/g,'');
 			SN = SN.toUpperCase();
+			SN = SN.replace("8P.M.", "APM");
 			
 			console.log('cleaned up SN = ' + SN);
 			
