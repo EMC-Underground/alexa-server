@@ -25,7 +25,7 @@ var insightModule1 = (function () {
 				{ItemName: "ESRS", 			OpsConsoleName:"EMC Secure Remote Services", 	suffixCode:"12"},
 				{ItemName: "ECS", 			OpsConsoleName:"Elastic Cloud Storage", 		suffixCode:"13"},
 		//		{ItemName: "GREENPLUM", 	OpsConsoleName:"Greenplum", 					suffixCode:"14"},
-				{ItemName: "EYE SIL ON", 	OpsConsoleName:"Isilon", 						suffixCode:"15"},
+				{ItemName: "EYESILON", 		OpsConsoleName:"Isilon", 						suffixCode:"15"},
 		//		{ItemName: "NETWORKER", 	OpsConsoleName:"NetWorker Family", 				suffixCode:"16"},
 		//		{ItemName: "PIVOTAL", 		OpsConsoleName:"Pivotal", 						suffixCode:"17"},
 				{ItemName: "POWERPATH", 	OpsConsoleName:"PowerPath", 					suffixCode:"18"},
