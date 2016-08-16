@@ -12,7 +12,7 @@ var insightModule1 = (function () {
 			
 			dataTypes.push(
 		//		{ItemName: "ATMOS", 		OpsConsoleName:"Atmos", 						suffixCode:"1"},
-				{ItemName: "AVAMAR", 		OpsConsoleName:"Avamar", 						suffixCode:"2"},
+				{ItemName: "AVOMAR", 		OpsConsoleName:"Avamar", 						suffixCode:"2"},
 				{ItemName: "CLARIION", 		OpsConsoleName:"CLARiiON", 						suffixCode:"3"},
 		//		{ItemName: "CAPTIVA", 		OpsConsoleName:"Captiva Products", 				suffixCode:"4"},
 				{ItemName: "CELERRA", 		OpsConsoleName:"Celerra", 						suffixCode:"5"},

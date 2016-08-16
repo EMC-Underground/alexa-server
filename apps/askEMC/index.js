@@ -779,6 +779,7 @@ function handleSerialNumberProvided(request, response) {
 		} else { // successfully pulled JSON inventory info
 			//console.log('result body = ' + result );
 			var parsedResult = JSON.parse(result);
+			var answer = 'TBD'
 			console.log('SN as interpreted = ' + request.slot('SN'));
 			
 			// remove any spaces and make all caps
@@ -798,7 +799,7 @@ function handleSerialNumberProvided(request, response) {
 		
 			console.log('answer = ' + answer );				
 			
-			if (answer == 'undefined') {
+			if (answer == 'TBD') {
 				var skipExtraPrompt = TRUE;
 				var speechOutput = 'I heard you say: <say-as interpret-as="digits">' + SN + '</say-as> , either I heard wrong or that serial number isn\'t valid. Please try again.';
 			} else {
