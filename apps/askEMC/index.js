@@ -608,7 +608,7 @@ function getRequestTypeFromIntent(request) {
 			
 			for (var x = 0; x < dataTypes[i].length; x++) { // loop through each array of possible dataType items (ex: products)
 			
-				console.log('dataTypes[i][x].ItemName = ' + dataTypes[i][x].ItemName)
+				//console.log('dataTypes[i][x].ItemName = ' + dataTypes[i][x].ItemName)
 				if (dataTypes[i][x].ItemName == capsDataType) { //if one of the dataType items matches what the user specified				
 					console.log('************* THERE IS A DATA TYPE MATCH *****************')
 					var dataType = dataTypes[i][x];
@@ -728,8 +728,9 @@ function handleSOrequest(request, response) {
 		}		
         repromptOutput = "For what customer?";	
 		
-		// set a flag to indicate that an SO number request is in process
-		response.session('SOrequest', 'TRUE');	
+		// clear any possible dataType session variable, and set a flag to indicate that an SO number request is in process
+		response.clearSession('dataType');
+		response.session('SOrequest', 'TRUE');
 		
         response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 		// Must call send to end the original request
@@ -797,7 +798,12 @@ function handleSerialNumberProvided(request, response) {
 		
 			console.log('answer = ' + answer );				
 			
-			var speechOutput = 'That S.O. number is <say-as interpret-as="digits">' + answer + '</say-as> ';
+			if (answer == 'undefined') {
+				var skipExtraPrompt = TRUE;
+				var speechOutput = 'I heard you say: <say-as interpret-as="digits">' + SN + '</say-as> , either I heard wrong or that serial number isn\'t valid. Please try again.';
+			} else {
+				var speechOutput = 'That S.O. number is <say-as interpret-as="digits">' + answer + '</say-as> ';
+			}
 			
 			// rotate language used
 			var counter = request.session('counter'); // pull the counter from session
@@ -809,17 +815,22 @@ function handleSerialNumberProvided(request, response) {
 			
 			console.log('counter = ' + counter);
 			response.session('counter', counter); // re-store the counter in session					
-			
-			if (counter == 1) {
-				speechOutput += '<break time=\"0.4s\" />What else are you interested in?';
-			} else if (counter == 2) {
-				speechOutput += '<break time=\"0.4s\" />What else can I help with?';
-			} else if (counter == 3) {
-				speechOutput += '<break time=\"0.4s\" />What other information would you like to hear?';
-			} else if (counter == 4) {
-				speechOutput += '<break time=\"0.4s\" />What next?';
-				response.session('counter', 0); // reset the counter in session
+
+			if (skipExtraPrompt) {
+				// don't add to speechOutput
+			} else {
+				if (counter == 1) {
+					speechOutput += '<break time=\"0.4s\" />What else are you interested in?';
+				} else if (counter == 2) {
+					speechOutput += '<break time=\"0.4s\" />What else can I help with?';
+				} else if (counter == 3) {
+					speechOutput += '<break time=\"0.4s\" />What other information would you like to hear?';
+				} else if (counter == 4) {
+					speechOutput += '<break time=\"0.4s\" />What next?';
+					response.session('counter', 0); // reset the counter in session
+				}				
 			}
+
 		};	
 		
 		var repromptOutput = 'What else can I help you with?';
