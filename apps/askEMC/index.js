@@ -157,7 +157,7 @@ app.intent('OneShotGetDataIntent',
 				"{how many} {-|DataType} {arrays|frames|boxes|solutions |} {are at|are installed at} {-|Customer}",
 				"Does {-|Customer} {use|have|own} {any |} {-|DataType} {arrays |}",
 				"Is {-|DataType} {out|installed|used} at {-|Customer}",
-				"How many {systems|products|solutions} does {-|Customer} have in {-|DataType}" 
+				"How many {systems|products|solutions} does {Customer} have in {-|DataType}" 
 			]
 						
 	},
@@ -245,7 +245,8 @@ app.intent('SerialNumberProvidedIntent',
 		"utterances":
 			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
 			[ 
-				"{SN|serial number} {-|SN}"
+				"{SN|serial number} {-|SN}",
+				"{-|SN}"
 			]						
 	},
  
