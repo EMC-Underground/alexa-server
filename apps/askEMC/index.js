@@ -384,11 +384,11 @@ function handleSendTextRequest(request, response) {
 			speechOutput = 'Text sent.'
 			repromptOutput = 'What would you like to hear about?';
 
-		} else {}
+		} else {
 			speechOutput = 'Hmm, there was a problem sending the text.'
 			repromptOutput = 'What else can I help with?';
 
-		};
+		}
 		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 	})
 };	
