@@ -366,19 +366,13 @@ app.intent('HelpIntent',
         console.log('REQUEST:  Help...');
 		handleWelcomeRequest(response);
     });
-	
-	playerSMS.publishSMS(ARNtoSend, textToSend, function (success) {
-		console.log('returned success = ' + success);
-		if (success == false) {problems = true}; // set problems flag for later
-		callback(null);
-	})
 
 function handleSendTextRequest(request, response) {
 	console.log('entering handleSendTextRequest');	
 	var ARNtoSend = 'arn:aws:sns:us-east-1:863554537735:emc';
 	var textToSend = 'IT WOOOORKED!';
 
-	playerSMS.publishSMS(ARNtoSend, textToSend, function (success) {
+	SMS.publishSMS(ARNtoSend, textToSend, function (success) {
 		console.log('returned success = ' + success);
 		if (success == true) {
 			speechOutput = 'Text sent.'
