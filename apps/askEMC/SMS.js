@@ -64,7 +64,9 @@ var SMS = (function () {
 		
         publishSMS: function (incomingARN, incomingMessage, callback) {
 			console.log('entering SMS.publishSMS function');							
-	
+			console.log('incomingARN = ' + incomingARN);
+			console.log('incomingMessage = ' + incomingMessage);
+			
 			sns.publish({
 				Message: incomingMessage,
 				TopicArn: incomingARN
