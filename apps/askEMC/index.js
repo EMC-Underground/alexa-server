@@ -20,6 +20,7 @@ module.change_code = 1;
 'use strict';
 
 var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
+	SMS = require('./SMS'),
 	app = new alexa.app( 'askEMC' ), // name of this app
 	speechOutput, // what to say back to the user
 	repromptOutput, // what to say if the user doesn't answer
@@ -305,6 +306,32 @@ app.intent('ContinueCustomerListIntent',
 	}
 );
 
+// intent handler for user asking for an SO number for a given customer
+app.intent('SendTextIntent',
+	{	  
+		"slots": 
+			{
+				"Customer": "CUSTOMER"
+			},
+	   
+		"utterances":
+			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
+			[ 
+				"{send me a {text|dashboard} for {-|Customer}",
+			]						
+	},
+ 
+	function (request, response) { 
+        console.log('entering SendTextIntent');
+		console.log('request.slot.Customer = ' + request.slot('Customer'));	
+		handleSendTextRequest(request, response);
+		// Return false immediately so alexa-app doesn't send the response
+		return false;
+	}
+);
+
+
+
 //TODO implement the yes/no intents
 //app.intent('YesIntent',
 //    {"utterances":config.utterances.Yes
@@ -339,7 +366,33 @@ app.intent('HelpIntent',
         console.log('REQUEST:  Help...');
 		handleWelcomeRequest(response);
     });
+	
+	playerSMS.publishSMS(ARNtoSend, textToSend, function (success) {
+		console.log('returned success = ' + success);
+		if (success == false) {problems = true}; // set problems flag for later
+		callback(null);
+	})
 
+function handleSendTextRequest(request, response) {
+	console.log('entering handleSendTextRequest');	
+	var ARNtoSend = 'arn:aws:sns:us-east-1:863554537735:emc';
+	var textToSend = 'IT WOOOORKED!';
+
+	playerSMS.publishSMS(ARNtoSend, textToSend, function (success) {
+		console.log('returned success = ' + success);
+		if (success == true) {
+			speechOutput = 'Text sent.'
+			repromptOutput = 'What would you like to hear about?';
+
+		} else {}
+			speechOutput = 'Hmm, there was a problem sending the text.'
+			repromptOutput = 'What else can I help with?';
+
+		};
+		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+	})
+};	
+	
 function handleSupportedQuestions(request, response) {
 		
 	speechOutput = 'Here are some questions I can answer: '
