@@ -2,6 +2,7 @@
 'use strict';
 console.log('entering SMS.js');
 var AWS = require("aws-sdk");
+AWS.config.loadFromPath(__dirname + '/AWSconfig.json');
 
 var SMS = (function () {
     // var dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
