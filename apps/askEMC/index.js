@@ -326,7 +326,7 @@ app.intent('SendTextIntent',
 		console.log('request.slot.Customer = ' + request.slot('Customer'));	
 		handleSendTextRequest(request, response);
 		// Return false immediately so alexa-app doesn't send the response
-		//return false;
+		return false;
 	}
 );
 
@@ -387,6 +387,8 @@ function handleSendTextRequest(request, response) {
 		speechOutput = 'Text sent.';
 		repromptOutput = 'What would you like to hear about?';
 		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+		// Must call send to end the original request
+		response.send();
 	})
 };	
 	
