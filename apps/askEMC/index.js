@@ -369,7 +369,7 @@ app.intent('HelpIntent',
 
 function handleSendTextRequest(request, response) {
 	console.log('entering handleSendTextRequest');	
-	var ARNtoSend = 'arn:aws:sns:us-east-1:863554537735:emc';
+	var ARNtoSend = 'arn:aws:sns:us-west-2:863554537735:emc';
 	var textToSend = 'IT WOOOORKED!';
 
 	SMS.publishSMS(ARNtoSend, textToSend, function (success) {
