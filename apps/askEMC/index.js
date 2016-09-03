@@ -370,7 +370,7 @@ app.intent('HelpIntent',
 function handleSendTextRequest(request, response) {
 	console.log('entering handleSendTextRequest');	
 	var ARNtoSend = 'arn:aws:sns:us-west-2:863554537735:emc';
-	var key = '10011453.10.1';
+	var key = 'happyface.jpg';
 	var getDataFromMunger = require('./getDataFromMunger') // module to get data from s3	
 	
 	getDataFromMunger.getURL(key, function (result) {
