@@ -326,7 +326,7 @@ app.intent('SendTextIntent',
 		console.log('request.slot.Customer = ' + request.slot('Customer'));	
 		handleSendTextRequest(request, response);
 		// Return false immediately so alexa-app doesn't send the response
-		return false;
+		//return false;
 	}
 );
 
