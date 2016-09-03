@@ -374,15 +374,18 @@ function handleSendTextRequest(request, response) {
 
 	SMS.publishSMS(ARNtoSend, textToSend, function (success) {
 		console.log('returned success = ' + success);
-		if (success == true) {
-			speechOutput = 'Text sent.'
-			repromptOutput = 'What would you like to hear about?';
+		// if (success == true) {
+			// speechOutput = 'Text sent.'
+			// repromptOutput = 'What would you like to hear about?';
 
-		} else {
-			speechOutput = 'Hmm, there was a problem sending the text.'
-			repromptOutput = 'What else can I help with?';
+		// } else {
+			// speechOutput = 'Hmm, there was a problem sending the text.'
+			// repromptOutput = 'What else can I help with?';
 
-		}
+		// }
+		
+		speechOutput = 'Text sent.';
+		repromptOutput = 'What would you like to hear about?';
 		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
 	})
 };	
