@@ -76,19 +76,14 @@ var SMS = (function () {
 					console.log(err, 'publishSMS function did not successfully complete.');
 					var success = false;
 				}
-				console.log(JSON.stringify('return data from sns.publish call = ' + data));
+				console.log('return data from sns.publish call = ' + JSON.stringify(data) );
 
 				if (data) {
 					console.log('publishSMS function successfully sent a text to ' + incomingARN);
 					var success = true;					
 				};
 				
-				// delay callback for 1 second to allow texts to arrive in order
-				setTimeout(callBackAfterDelay, 200);
-
-				function callBackAfterDelay() {
-					callback(success);
-				};		
+				callback(success);
 			});
         }		
     };		
