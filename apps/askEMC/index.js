@@ -372,7 +372,7 @@ function handleSendTextRequest(request, response) {
 	var ARNtoSend = 'arn:aws:sns:us-west-2:863554537735:emc';
 	var key = '10011453.10.1';
 	
-	getDataFromMunger.getData(key, function (result) {
+	getDataFromMunger.getURL(key, function (result) {
 
 		var textToSend = result;
 
