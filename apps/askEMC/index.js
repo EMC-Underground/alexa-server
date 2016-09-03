@@ -370,26 +370,29 @@ app.intent('HelpIntent',
 function handleSendTextRequest(request, response) {
 	console.log('entering handleSendTextRequest');	
 	var ARNtoSend = 'arn:aws:sns:us-west-2:863554537735:emc';
-	var textToSend = 'IT WOOOORKED!';
+	var key = '10011453.10.1';
+	
+	getDataFromMunger.getData(key, function (result) {
 
-	SMS.publishSMS(ARNtoSend, textToSend, function (success) {
-		console.log('returned success = ' + success);
-		// if (success == true) {
-			// speechOutput = 'Text sent.'
-			// repromptOutput = 'What would you like to hear about?';
+		var textToSend = result;
 
-		// } else {
-			// speechOutput = 'Hmm, there was a problem sending the text.'
-			// repromptOutput = 'What else can I help with?';
+		SMS.publishSMS(ARNtoSend, textToSend, function (success) {
+			console.log('returned success = ' + success);
+			if (success == true) {
+				speechOutput = 'Text sent.'
+				repromptOutput = 'What would you like to hear about?';
 
-		// }
-		
-		speechOutput = 'Text sent.';
-		repromptOutput = 'What would you like to hear about?';
-		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
-		// Must call send to end the original request
-		response.send();
-	})
+			} else {
+				speechOutput = 'Hmm, there was a problem sending the text.'
+				repromptOutput = 'What else can I help with?';
+
+			}
+			
+			response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+			// Must call send to end the original request
+			response.send();
+		})
+	})		
 };	
 	
 function handleSupportedQuestions(request, response) {

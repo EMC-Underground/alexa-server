@@ -27,7 +27,21 @@ var getDataFromMunger = (function () {
 				}						
 			});										
 						
+		},
+		
+		getURL: function (key, callback) {
+			
+			// get the data from the s3 bucket
+			var s3params = {
+					Bucket: 'munger-insights',
+					Key: key
+				};	
+
+			var url = s3.getSignedUrl('getObject', s3params)
+			console.log('The URL is', url);
+			callback(url); 																								
 		}		
+		
 	}
 				
 })();
