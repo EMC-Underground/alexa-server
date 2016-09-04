@@ -37,7 +37,7 @@ var alexa = require( 'alexa-app' ), // this app uses the alexa-app node module
 For each module: Add insight modules below. 
 *****************************************************/
 var insightModule1 = require('./insightModule1');
-var insightModule2 = require('./insightModule2');	
+var insightModule4 = require('./insightModule4');	
 
 	
 	
@@ -45,7 +45,7 @@ var insightModule2 = require('./insightModule2');
 For each module: Add the question that can be asked by a user. 
 *****************************************************/	
 listOfQuestions += insightModule1.addThisQuestion(); 
-listOfQuestions += insightModule2.addThisQuestion(); 
+listOfQuestions += insightModule4.addThisQuestion(); 
 
 
 
@@ -57,7 +57,7 @@ insightModule1.addThisDataType(dataTypes[0], function (subDataTypesAdded) { data
 // Now dataTypes[0] holds an array of products, each one is an object such as: {ItemName: "ATMOS", OpsConsoleName:"Atmos", suffixCode:"1"}
 
 dataTypes[1] = [] // the 2nd item in the dataTypes array is a new empty array we will now populate with states
-insightModule2.addThisDataType(dataTypes[1], function (subDataTypesAdded) { dataTypes[1] = subDataTypesAdded; });
+insightModule4.addThisDataType(dataTypes[1], function (subDataTypesAdded) { dataTypes[1] = subDataTypesAdded; });
 // Now dataTypes[1] holds an array of states, each one is an object such as {ItemName: "Washington", OpsConsoleName: "WA", suffixCode: "1"}
 
 
@@ -97,8 +97,8 @@ function getSpecificRequest(customerInfo, reqType, request, response) {
 						// Must call send to end the original request
 						response.send();
 					});						
-				} else if (i == 1) { // if item was a match in the 2nd array, we know it was a state aka insightModule2 should be used
-					insightModule2.addResponseLogic(customerInfo, reqType, request, response, function(userResponseText) { // get the response to give the user
+				} else if (i == 1) { // if item was a match in the 2nd array, we know it was a state aka insightModule4 should be used
+					insightModule4.addResponseLogic(customerInfo, reqType, request, response, function(userResponseText) { // get the response to give the user
 						var repromptOutput = 'What else can I help you with?';
 						response.say(userResponseText).reprompt(repromptOutput).shouldEndSession( false );	
 						// Must call send to end the original request

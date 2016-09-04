@@ -1,5 +1,5 @@
 'use strict';
-var insightModule2 = (function () {
+var insightModule4 = (function () {
 
     return {
 				
@@ -9,7 +9,7 @@ var insightModule2 = (function () {
 		},	
 	
 		addThisDataType: function (subDataTypes, callback) {
-			console.log('entering insightModule2 addThisDataType function')
+			console.log('entering insightModule4 addThisDataType function')
 			
 			subDataTypes.push(
 			
@@ -24,7 +24,7 @@ var insightModule2 = (function () {
 
 		addResponseLogic: function (customerInfo, reqType, request, response, callback) {
 			var getDataFromMunger = require('./getDataFromMunger') // module to get lightweight sanitized 'insight' from s3			
-			var key = customerInfo.gdun + '.' + reqType.suffixCode + '.2'; // the .2 refers to munger1
+			var key = customerInfo.gdun + '.' + reqType.suffixCode + '.4'; // the .4 refers to munger4
 			console.log('key being used to retrieve insight: ' + '"' + key + '"');
 			
 			getDataFromMunger.getData(key, function (result) {	
@@ -80,4 +80,4 @@ var insightModule2 = (function () {
 				
 })();
 
-module.exports = insightModule2;
+module.exports = insightModule4;
