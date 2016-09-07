@@ -1,30 +1,33 @@
 'use strict';
-var insightModule4 = (function () {
+var insightModule2 = (function () {
 
     return {
 
 		addThisQuestion: function () {
-			var questionsOut = ' How many systems does Customer XYZ have in a given state?'
+			var questionsOut = ' Are there SRs open for XYZ customer?'
 			return questionsOut;
 		},
 
 		addThisDataType: function (subDataTypes, callback) {
-			console.log('entering insightModule4 addThisDataType function')
+			console.log('entering insightModule2 addThisDataType function')
 
 			subDataTypes.push(
 
-				{ItemName: "WASHINGTON", 	OpsConsoleName: "WA", 	suffixCode: "1"},
-				{ItemName: "OREGON", 		OpsConsoleName: "OR", 	suffixCode: "2"},
-				{ItemName: "IDAHO", 		OpsConsoleName: "ID", 	suffixCode: "3"},
-				{ItemName: "ARIZONA", 		OpsConsoleName: "AZ", 	suffixCode: "4"},
-				{ItemName: "CALIFORNIA", 	OpsConsoleName: "CA", 	suffixCode: "5"}  );
+        {ItemName: "SEV 1", 	OpsConsoleName: "S1", 	suffixCode: "1"},
+    		{ItemName: "SEV 2", 		OpsConsoleName: "S2", 	suffixCode: "2"},
+    		{ItemName: "SEV 3", 		OpsConsoleName: "S3", 	suffixCode: "3"},
+    		{ItemName: "SEV 4", 		OpsConsoleName: "S4", 	suffixCode: "4"},
+    		{ItemName: "SEV 5", 	OpsConsoleName: "S5", 	suffixCode: "5"},
+    		{ItemName: "SEV 7H", 	OpsConsoleName: "S7h", 	suffixCode: "6"},
+    		{ItemName: "SEV 7M", 	OpsConsoleName: "S7M", 	suffixCode: "7"},
+    		{ItemName: "SEV 7L", 	OpsConsoleName: "S7L", 	suffixCode: "8"}  );
 
 			callback(subDataTypes);
 		},
 
 		addResponseLogic: function (customerInfo, reqType, request, response, callback) {
 			var getDataFromMunger = require('./getDataFromMunger') // module to get lightweight sanitized 'insight' from s3
-			var key = customerInfo.gdun + '.' + reqType.suffixCode + '.4'; // the .4 refers to munger4
+			var key = customerInfo.gdun + '.' + reqType.suffixCode + '.2'; // the .2 refers to munger1
 			console.log('key being used to retrieve insight: ' + '"' + key + '"');
 
 			getDataFromMunger.getData(key, function (result) {
@@ -47,8 +50,8 @@ var insightModule4 = (function () {
 						isAre = 'is';
 					}
 
-					var speechOutput = 'There ' + isAre + ' ' + answer + ' systems installed at ' + customerInfo.customerName +
-										' in their ' + reqType.ItemName + ' data centers.';
+					var speechOutput = 'There ' + isAre + ' ' + answer + ' SRs open at ' + customerInfo.customerName +
+										' of severity ' + reqType.ItemName;
 
 					// rotate language used
 					var counter = request.session('counter'); // pull the counter from session
@@ -80,4 +83,4 @@ var insightModule4 = (function () {
 
 })();
 
-module.exports = insightModule4;
+module.exports = insightModule2;
