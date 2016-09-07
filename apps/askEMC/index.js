@@ -269,8 +269,12 @@ app.intent('GetTopThreeIntent',
 		"utterances":
 			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
 			[ 
-				"{for|get|get me|tell me|what are|I need|about} {the top three customers|accounts for } {-|DataType}"
-
+				"{for|get|get me|give me|tell me|what are|I need|about} the top three {customers|accounts} for {-|DataType}",
+				"{for|get|get me|give me|tell me|what are|I need|about} the three {biggest|largest} {customers|accounts} for {-|DataType}",
+				"{for|get|get me|give me|tell me|what are|I need|about} the top three {-|DataType} {customers|accounts}",
+				"{for|get|get me|give me|tell me|what are|I need|about} the three {biggest|largest} {customers|accounts}",
+				"{for|get|get me|give me|tell me|what are|I need|about} the top three {customers|accounts}",
+				"{for|get|get me|give me|tell me|what are|I need|about} the three {biggest|largest} {customers|accounts}"				
 			]						
 	},
  
@@ -586,19 +590,25 @@ function handleDataTypeDialogRequest(request, response) {
     }
 	
 	// set this so we have access to user's request type later
-	response.session('dataType', reqType); 
+	response.session('dataType', reqType);
 
-    // if we don't have a customer name yet, go get it. If we have a customer name/gdun, perform the final request
-    if ( request.session('customerInfo') ) {
-        getSpecificRequest( request.session('customerInfo'), reqType, request, response );
-    } else {
-        // The user provided the request type but no customer name. Prompt for customer name.
-        speechOutput = "Which customer would you like " + reqType.displayDataType  + " information for?";
-        repromptOutput = "For which customer?";
-		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
-		// Must call send to end the original request
-		response.send();
-    }
+    if ( request.session('top3requestInFlight') ) { // the user first asked for the top 3 customers for a product, but didn't specify which product
+		handleTop3Request(request, response) // execute handleTop3Request now that we have the product they are interested in
+	} else { // this was not a top 3 product request
+		// if we don't have a customer name yet, go get it. If we have a customer name/gdun, perform the final request
+		if ( request.session('customerInfo') ) {
+			getSpecificRequest( request.session('customerInfo'), reqType, request, response );
+		} else {
+			// The user provided the request type but no customer name. Prompt for customer name.
+			speechOutput = "Which customer would you like " + reqType.displayDataType  + " information for?";
+			repromptOutput = "For which customer?";
+			response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+			// Must call send to end the original request
+			response.send();
+		}		
+	}
+
+
 }
 
 /**
@@ -960,14 +970,19 @@ function handleTop3Request(request, response) {
 	console.log('reqType = ' + JSON.stringify(reqType));
 	
     if (reqType.error) {
-        // Invalid request type. Prompt for request type which will fire DialogGetDataIntent
-		repromptOutput = " What would you like to hear about?";	
-        speechOutput = "I didn't catch what you wanted to hear about  ";
-	
-        response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
-		// Must call send to end the original request
-		response.send();		
-        return;
+		
+		if ( request.session('dataType') ) { // if dataType is stored in session, use it
+			reqType = request.session('dataType')
+		} else {
+			// Invalid request type. Prompt for request type which will fire DialogGetDataIntent	
+			response.session('top3requestInFlight', 'TRUE'); // set this flag so we know what to do when DialogGetDataIntent fires		
+			repromptOutput = " For which product?";	
+			speechOutput = "Based on sales of which product?";	
+			response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+			// Must call send to end the original request
+			response.send();		
+			return;			
+		}	
     }	
 	
 	var getDataFromMunger = require('./getDataFromMunger') // module to get lightweight sanitized 'insight' from s3			
@@ -984,16 +999,12 @@ function handleTop3Request(request, response) {
 			console.log('result = ' + result );
 			var parsedResult = JSON.parse(result);
 			
-			console.log('parsedResult[0].C = ' + parsedResult[0].C );
-			console.log('parsedResult[1].C = ' + parsedResult[1].C );
-			console.log('parsedResult[2].C = ' + parsedResult[2].C );
-			
 			var cust1 = getCustomerNameFromGdun(parsedResult[0].C);
 			var cust2 = getCustomerNameFromGdun(parsedResult[1].C);
 			var cust3 = getCustomerNameFromGdun(parsedResult[2].C);
 			
-			var speechOutput = 'The top customer is ' + cust1.customerName + ', with ' + parsedResult[0].N + ' install base records for ' + reqType.ItemName + ', ';
-			speechOutput += 'The 2nd biggest customer is ' + cust2.customerName + ', with ' + parsedResult[1].N + ' records, ';
+			var speechOutput = 'The top customer is ' + cust1.customerName + ', with ' + parsedResult[0].N + ' install base records for ' + reqType.ItemName + '. ';
+			speechOutput += 'The 2nd biggest customer is ' + cust2.customerName + ', with ' + parsedResult[1].N + ' records. ';
 			speechOutput += 'The 3rd biggest customer is ' + cust3.customerName + ', with ' + parsedResult[2].N + ' records. ';
 						
 			// rotate language used
@@ -1017,7 +1028,10 @@ function handleTop3Request(request, response) {
 				speechOutput += '<break time=\"0.4s\" />What next?';
 				response.session('counter', 0); // reset the counter in session
 			}
-		}			
+		}
+
+		// clear any possible top3requestInFlight session variable
+		response.clearSession('top3requestInFlight');		
 		
 		var repromptOutput = 'What else can I help you with?';
 		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );	
@@ -1026,7 +1040,6 @@ function handleTop3Request(request, response) {
 	});	
   
 }
-
 
 
 module.exports = app;
