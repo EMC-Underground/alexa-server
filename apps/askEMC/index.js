@@ -258,6 +258,33 @@ app.intent('SerialNumberProvidedIntent',
 	}
 );
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// intent handler for user asking for an SO number for a given customer
+app.intent('GetTop3Intent',
+	{	  
+		"slots": 
+			{
+				"DataType": "DATATYPE"	
+			},
+	   
+		"utterances":
+			// alexa-app builds the utterances file for copy/paste into Alexa skill when deployed	
+			[ 
+				"{for|get|get me|tell me|what are|I need|about} {the top three customers|accounts for } {-|DataType}"
+
+			]						
+	},
+ 
+	function (request, response) { 
+        console.log('entering GetTop3Intent');
+		console.log('request.slot.DataType = ' + request.slot('DataType'));	
+		handleTop3Request(request, response);
+		// Return false immediately so alexa-app doesn't send the response
+		return false;
+	}
+);
+
 // intent handler for user asking what information they can get about a given customer
 app.intent('SupportedQuestionsIntent',
 	{	  	   
@@ -638,6 +665,32 @@ function getGdunFromIntent(request) {
     }
 }
 
+
+/**
+ * Gets the request type from the intent or returns an error
+ */
+function getCustomerNameFromGdun(gdunIn) {
+	console.log('entering getCustomerNameFromGdun function');
+	
+	for (var gduns in CUSTOMERS) {
+		// skip loop if the property is from prototype
+		if (!CUSTOMERS.hasOwnProperty(gduns)) continue;
+
+		var thisCustomer = CUSTOMERS[gduns];
+		console.log('thisCustomer = ' + thisCustomer)
+		console.log('thisCustomer.gduns = ' + thisCustomer.gduns)
+		console.log('gdunIn = ' + gdunIn)
+		if (thisCustomer.gduns == gdunIn) {
+			console.log('************* THERE IS A GDUN MATCH *****************')
+			console.log('customer name for ' + gdunIn + ' = ' + thisCustomer.customer)
+			return {
+				customerName: thisCustomer.customer,
+				gdun: gdunIn
+			}
+		}			
+	}	
+}
+
 /**
  * Gets the request type from the intent or returns an error
  */
@@ -896,5 +949,86 @@ function handleSerialNumberProvided(request, response) {
 		response.send();
 	});						
 }
+
+/**
+ * Handles the case where the user asks for an SO number for a given customer
+ */
+function handleTop3Request(request, response) {
+	console.log('entering handleTop3Request function');
+
+	// Determine which product the user is interested in
+    var reqType = getRequestTypeFromIntent(request);
+	
+	console.log('reqType = ' + JSON.stringify(reqType));
+	
+    if (reqType.error) {
+        // Invalid request type. Prompt for request type which will fire DialogGetDataIntent
+		repromptOutput = " What would you like to hear about?";	
+        speechOutput = "I didn't catch what you wanted to hear about  ";
+	
+        response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );
+		// Must call send to end the original request
+		response.send();		
+        return;
+    }	
+	
+	var getDataFromMunger = require('./getDataFromMunger') // module to get lightweight sanitized 'insight' from s3			
+	var key = 'top3.' + reqType.suffixCode + '.1'; // the .1 refers to munger1
+	console.log('key being used to retrieve insight: ' + '"' + key + '"');
+	
+	getDataFromMunger.getData(key, function (result) {	
+		
+		if (!result) {
+
+			var speechOutput = 'That information doesn\'t seem to be available right now. Can I help with something else?';
+			
+		} else { // successfully pulled JSON inventory info
+			console.log('result = ' + result );
+			var parsedResult = JSON.parse(result);
+			
+			console.log('parsedResult[0].C = ' + parsedResult[0].C );
+			console.log('parsedResult[1].C = ' + parsedResult[1].C );
+			console.log('parsedResult[2].C = ' + parsedResult[2].C );
+			
+			var cust1 = getCustomerNameFromGdun(parsedResult[0].C);
+			var cust2 = getCustomerNameFromGdun(parsedResult[1].C);
+			var cust3 = getCustomerNameFromGdun(parsedResult[2].C);
+			
+			var speechOutput = 'The top customer is ' + cust1.customerName + ', with ' + parsedResult[0].N + ' install base records for ' + reqType.ItemName + ', ';
+			speechOutput += 'The 2nd biggest customer is ' + cust2.customerName + ', with ' + parsedResult[1].N + ' records, ';
+			speechOutput += 'The 3rd biggest customer is ' + cust3.customerName + ', with ' + parsedResult[2].N + ' records. ';
+						
+			// rotate language used
+			var counter = request.session('counter'); // pull the counter from session
+			if (!counter) { // counter needs to be initialized
+				counter = 1
+			} else {
+				counter++ // increment the counter
+			}
+			
+			console.log('counter = ' + counter);
+			response.session('counter', counter); // re-store the counter in session					
+
+			if (counter == 1) {
+				speechOutput += '<break time=\"0.4s\" />What else are you interested in?';
+			} else if (counter == 2) {
+				speechOutput += '<break time=\"0.4s\" />What else can I help with?';
+			} else if (counter == 3) {
+				speechOutput += '<break time=\"0.4s\" />What other information would you like to hear?';
+			} else if (counter == 4) {
+				speechOutput += '<break time=\"0.4s\" />What next?';
+				response.session('counter', 0); // reset the counter in session
+			}
+		}			
+		
+		var repromptOutput = 'What else can I help you with?';
+		response.say(speechOutput).reprompt(repromptOutput).shouldEndSession( false );	
+		// Must call send to end the original request
+		response.send();
+	});	
+  
+}
+
+
 
 module.exports = app;
