@@ -258,10 +258,8 @@ app.intent('SerialNumberProvidedIntent',
 	}
 );
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // intent handler for user asking for an SO number for a given customer
-app.intent('GetTop3Intent',
+app.intent('GetTopThreeIntent',
 	{	  
 		"slots": 
 			{
@@ -277,7 +275,7 @@ app.intent('GetTop3Intent',
 	},
  
 	function (request, response) { 
-        console.log('entering GetTop3Intent');
+        console.log('entering GetTopThreeIntent');
 		console.log('request.slot.DataType = ' + request.slot('DataType'));	
 		handleTop3Request(request, response);
 		// Return false immediately so alexa-app doesn't send the response
