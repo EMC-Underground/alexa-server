@@ -5,11 +5,16 @@
 This is a front end app servicing requests via Alexa for EMC info.
 It is set up to be hosted on Pivotal Cloud Foundry.
 
+Examples of things you can ask:
+- get me an S.O. for {Customer}
+- What are the top 3 VMAX accounts?
+- How many Sev2 SRs does {Customer} have open?
+- Tell me about DataDomain at Boeing
+- How many systems does Microft have in Washington?
+
+
 Ideas for more modules:
 
-- report any outstanding sev 1 SRs
-- report the number of sev 1s in the last X time periods
-- provide the number of outstanding SRs
 - provide the average age of SRs.
 
 /***************************************************************************************************************
