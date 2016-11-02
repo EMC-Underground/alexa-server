@@ -41,6 +41,7 @@ node_modules
 **/config.json.emc-api-user
 **/appOld.js
 **/*.zip
+**/local-vcap.json
 
 
 

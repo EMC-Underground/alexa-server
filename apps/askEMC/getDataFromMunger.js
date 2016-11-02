@@ -1,10 +1,25 @@
 'use strict';
 var getDataFromMunger = (function () {
 
-	var AWS = require( "aws-sdk" );
-	AWS.config.loadFromPath(__dirname + '/AWSconfig.json');
-	var	s3 = new AWS.S3();
+	var AWS = require( "aws-sdk");
+	
+	// try and set the vcap from a local file, if it fails, appEnv will be set to use
+	// the PCF user provided service specified with the getServiceCreds call
+	var localVCAP  = null	
+	try {
+		localVCAP = require("./local-vcap.json")
+		} catch(e) {}
+		
+	var appEnv = cfenv.getAppEnv({vcap: localVCAP}) // vcap specification is ignored if not running locally
+	var AWScreds  = appEnv.getServiceCreds('aws-creds-service') || {}
+	var ECScreds  = appEnv.getServiceCreds('ecs-creds-service') || {}
 
+	var AWSconfig = {
+	  region: AWScreds.region,
+	  accessKeyId: AWScreds.accessKeyId,
+	  secretAccessKey: AWScreds.secretAccessKey
+	};
+	var s3 = new AWS.S3(AWSconfig);
 
     return {
 
