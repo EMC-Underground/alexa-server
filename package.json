@@ -10,7 +10,9 @@
     "dependencies": {
     "alexa-app-server": "*",
     "alexa-app": "^2.3.3",
-    "aws-sdk": "*"
+    "aws-sdk": "*",
+	"cfenv": "^1.0.3"
+	
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,8 @@
 'use strict';
 var getDataFromMunger = (function () {
 
-	var AWS = require( "aws-sdk");
+	var AWS = require( "aws-sdk"),
+		cfenv = require("cfenv");
 	
 	// try and set the vcap from a local file, if it fails, appEnv will be set to use
 	// the PCF user provided service specified with the getServiceCreds call
